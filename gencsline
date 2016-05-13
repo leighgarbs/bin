@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "What branch should I generate a line for?"
+    exit
+fi
+
+printf "element * "
+
+if [ "$1" == "--checkedout" ]; then
+    printf "CHECKEDOUT"
+elif [ "$1" == "--main" ]; then
+    printf "/main/LATEST"
+else
+    printf ".../$1/LATEST"
+fi
+
+printf "\n"

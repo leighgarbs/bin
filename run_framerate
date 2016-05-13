@@ -1,0 +1,17 @@
+#!/bin/bash
+
+TMP_SIMINIT=/tmp/$USER.siminit
+
+if [ -z "$1" ]; then
+    echo "What framerate (Hz)?"
+    exit
+fi
+
+# Generate in microseconds since the siminit takes microseconds
+NEW_FRAMERATE=$(echo "1000000/$1" | bc)
+
+cat siminit | \
+sed "s:FRAME_SIZE.*:FRAME_SIZE $NEW_FRAMERATE:" | \
+sed "s:#*FRAME_SIZE:FRAME_SIZE:" > $TMP_SIMINIT
+
+mv $TMP_SIMINIT siminit

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Get rid of any simlinks
+rm -f Makefile.options
+
+# Grab Makefile.options.skel, set all the options how I like them by default, and
+# write a Makefile.options
+cat $BASEPATH/aircraft++/Makefile.options.skel | setmkopts \
+--modellist="" \
+--pluginslist="" \
+--buildoption BATCH_DEBUG \
+--librarydebug ON \
+--osgoption NO_OSG \
+--graphicsframeworkoption NO_OSG \
+--hardwareoption NO_HARDWARE \
+--aircraftmotioncueing OFF \
+--hl20motioncueing OFF \
+> Makefile.options
+
+# Make sure permissions are properly set
+chmod 644 Makefile.options

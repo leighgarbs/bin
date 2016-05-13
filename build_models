@@ -1,0 +1,21 @@
+#!/bin/bash
+
+TMP_MAKEFILEOPTIONS=/tmp/$USER.makefile.options
+
+# Grab the list of models
+MODELS=$@
+
+# Replace spaces with commas as required by setmkopts
+MODELS=${MODELS// /,}
+
+if ! [ -e Makefile.options ]; then
+
+    # Initialize a Makefile.options
+    build_default
+fi
+
+# Make the change to a temporary file
+cat Makefile.options | setmkopts --modellist=$MODELS > $TMP_MAKEFILEOPTIONS
+
+# Overwrite the Makefile.options proper with the new one
+mv $TMP_MAKEFILEOPTIONS Makefile.options

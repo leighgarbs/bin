@@ -1,0 +1,29 @@
+#!/bin/bash
+
+TMP_SIMINIT=/tmp/$USER.siminit
+
+MODELLIST=`gensiminitmodel $@`
+
+if ! [ "$?" == 0 ]; then
+    exit "$?"
+fi
+
+MODELLIST+='
+'
+
+if ! [ -e siminit ]; then
+    # Initialize a siminit
+    run_default
+fi
+
+
+# Replace all newlines with a literal \n so sed doesn't get confused
+MODELLIST=`echo "$MODELLIST" | perl -pe 's/\r?\n/\\\\n/'`
+
+# Concatenate the End_FlightSim text
+MODELLIST=$MODELLIST"End_FlightSim"
+
+
+# Add in the ones specified on the command line
+cat siminit | sed "s:End_FlightSim:$MODELLIST:" > $TMP_SIMINIT
+mv $TMP_SIMINIT siminit

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# cleartool setcs won't take a stream so the default cs has to go to a file first
+TMP_CS=/tmp/$USER.cs
+
+gencsline --checkedout > $TMP_CS
+gencsline --main >> $TMP_CS
+
+cleartool setcs $TMP_CS

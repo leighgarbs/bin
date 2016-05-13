@@ -1,0 +1,52 @@
+#!/bin/bash
+
+TMP_SIMINIT=/tmp/$USER.siminit
+
+NAME=
+NAME_SET=false
+
+TYPE=
+TYPE_SET=false
+
+while [ -n "$1" ]
+do
+    case "$1" in
+	--name)
+	    NAME=$2
+	    NAME_SET=true
+	    shift
+	    ;;
+
+	--type)
+	    TYPE=$2
+	    TYPE_SET=true
+	    shift
+	    ;;
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
+
+
+MODEL_RM_LINE=
+
+if [ "$NAME_SET" == true ] && [ "$TYPE_SET" == true ]; then
+    echo "Specify either --type or --name, not both"
+    exit 1
+elif [ "$NAME_SET" == true ]; then
+    MODEL_RM_LINE="Name.*$NAME"
+elif [ "$TYPE_SET" == true ]; then
+    MODEL_RM_LINE="Type.*$TYPE"
+else
+    echo "Specify a model to delete with either --type or --name"
+    exit 1
+fi
+
+for i in $( cat siminit | grep -n "Begin_PositionalModel" | sed "s/:.*//" ); do
+    echo $i
+done
+
+for i in $( cat siminit | grep -n "End_PositionalModel" | sed "s/:.*//" ); do
+    echo $i
+done

@@ -1,0 +1,73 @@
+#!/usr/bin/expect
+
+log_user 0
+
+set from ""
+set to ""
+set smtp_relay ""
+
+# If nothing happens after this time expect exits
+set timeout 5
+
+for {set i 0} {$i < $argc} {incr i 1} {
+    set arg [lindex $argv $i]
+    if {$arg == "--smtp-relay"} {
+       incr i 1
+       set smtp_relay [lindex $argv $i]
+    } elseif {$arg == "--from"} {
+       incr i 1
+       set from [lindex $argv $i]
+    } elseif {$arg == "--to"} {
+       incr i 1
+       set to [lindex $argv $i]
+    }
+}
+
+if {$to == ""} {
+   send_user "Usage: sendemail {--to <address>} \[--from <address>\] \[--smtp-relay <hostname>\]\n"
+   exit 1
+}
+
+if {$from == ""} {
+   # We have to make a from address
+   set user [exec whoami]
+   set host [exec hostname]
+   set from $user@$host
+}
+
+if {$smtp_relay == ""} {
+   # We have to query for the SMTP relay
+   set domain [exec echo $to | cut -d @ -f 2]
+   set smtp_relay [exec getms $domain]
+}
+
+# Start the telnet session and wait for the 220 HELO
+spawn telnet $smtp_relay smtp
+expect "220"
+
+# Hello!
+send "HELO sendemail\n"
+expect "250"
+
+# Who is sending?
+send "MAIL FROM:<$from>\n"
+expect "250"
+
+# Who is receiving?
+send "RCPT TO:<$to>\n"
+expect "250"
+
+# Start sending data
+send "DATA\n"
+expect "354"
+
+# Send whatever comes across stdin
+send [read stdin]
+
+# We're done
+send ".\n"
+expect {
+    250  {send "QUIT\n";exit 0}
+}
+
+exit 1

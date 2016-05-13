@@ -1,0 +1,13 @@
+#!/bin/bash
+
+HEADER="$HOME/header.txt"
+TMP_HEADER="/tmp/header.tmp"
+
+if [ -z "$1" ]; then
+   echo Which file should the header be prepended to?
+   exit 1
+fi
+
+cat $HEADER > $TMP_HEADER
+cat $1 >> $TMP_HEADER
+mv $TMP_HEADER $1

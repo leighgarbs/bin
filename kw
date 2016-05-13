@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo What build do you want to run Klocwork on?
+    exit 1
+fi
+
+# What view are we in?
+CVIEW=$(cleartool lsview -cview | cut -d " " -f 2)
+
+# Will be filled in with the kwcheck create command if that needs to be run
+KWCREATE=
+if [ ! -d ".kwlp" ] || [ ! -d ".kwps" ]; then
+    KWCREATE='kwcheck create'
+fi
+
+# Generate the .pconf import command
+PCONF="/vobs/Simulation/DeveloperSupport/config/analysis_profile.pconf"
+KWIMPORT_PCONF="kwcheck import $PCONF"
+
+# Generate the .kb import command
+KB="/vobs/Simulation/DeveloperSupport/config/lasrs.kb"
+KWIMPORT_KB="kwcheck import $KB"
+
+# Generate the kwshell command
+KWSHELL="kwshell $@"
+
+# Generate the kwcheck command
+KWCHECK='kwcheck run --rebuild --jobs-num 4'
+
+# Generate the set of commands to run
+CMDS="cd $(pwd);$KWCREATE;$KWIMPORT_PCONF;$KWIMPORT_KB;$KWSHELL;$KWCHECK"
+
+# Run Klocwork on jedi
+ssh jedi "cleartool setview -exec '$CMDS' $CVIEW"

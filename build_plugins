@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Grab the list of plugins
+PLUGINS=$@
+
+# Replace spaces with commas as required by setmkopts
+PLUGINS=${PLUGINS// /,}
+
+# Make the change to a temporary file
+cat Makefile.options | setmkopts --pluginslist=$PLUGINS > Makefile.options.temp
+
+# Overwrite the Makefile.options proper with the new one
+mv Makefile.options.temp Makefile.options

@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    echo What should I kick off?
+    exit 1
+fi
+
+if [ -z "$KICKOFF_DEST" ]; then
+    echo Please set KICKOFF_DEST to a valid email address.
+    exit 1
+fi
+
+FROM=$(whoami)@$(hostname)
+
+# Come up with a short name to describe this job
+SHORTNAME=$(echo $@ | cut -d " " -f 1)$$
+
+# Print the job name so the user can see it
+echo $SHORTNAME
+
+# Construct the subject line
+MAIL_SUBJECT="$SHORTNAME done on $FROM"
+
+# Construct the header lines
+HEADER=
+HEADER+="From: $FROM\n"
+HEADER+="To: $KICKOFF_DEST\n"
+HEADER+="Subject: $MAIL_SUBJECT\n"
+
+# If the user has SMTP_RELAY set then pass that to sendemail
+SMTP_RELAY_CMD=
+if [ -n "$SMTP_RELAY" ]; then
+    SMTP_RELAY_CMD="--smtp-relay $SMTP_RELAY"
+fi
+
+# Run the job, drop a .kickoff file in the user's home dir and then email them; do 
+# this all in the background
+(TIME=$(time(nohup "$@" > /dev/null 2> /dev/null < /dev/null) 2>&1); \
+    MAIL_BODY="$@\n$TIME"; \
+    echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME; \
+    echo -e "$HEADER$MAIL_BODY" | \
+    sendemail --from $FROM --to $KICKOFF_DEST $SMTP_RELAY_CMD) &
