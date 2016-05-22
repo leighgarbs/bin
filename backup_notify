@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+   echo Which rotation?
+   exit 1
+fi
+
+if [ -z "$2" ]; then
+    echo Which backup?
+fi
+
+TMPFILE=/tmp/"$2".bkdone
+BKDIR=/mnt/backup/leigh/rsnapshot
+
+echo Subject:"$1" "$2" backup done > $TMPFILE
+echo From:leigh@backup1 >> $TMPFILE
+echo To:craymen@gmail.com >> $TMPFILE
+echo -e "\n" >> $TMPFILE
+
+printbackups()
+{
+    OUT=$(ls -l "$BKDIR"/"$1" | grep "$2" | cut -d " " -f 7-)
+    LC=$(echo "$OUT" | wc -l)
+    if [ "$LC" = "1" ]; then
+	echo none
+    else
+	echo "$OUT"
+    fi
+}
+
+echo Dailies: >> $TMPFILE
+printbackups "$2" daily >> $TMPFILE
+echo >> $TMPFILE
+
+echo Weeklies: >> $TMPFILE
+printbackups "$2" weekly >> $TMPFILE
+echo >> $TMPFILE
+
+echo Monthlies: >> $TMPFILE
+printbackups "$2" monthly >> $TMPFILE
+echo >> $TMPFILE
+
+cat $TMPFILE | sendemail --to craymen@gmail.com
