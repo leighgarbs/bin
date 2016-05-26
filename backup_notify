@@ -28,6 +28,9 @@ printbackups()
     fi
 }
 
+du -sh "$BKDIR"/"$2" >> $TMPFILE
+echo >> $TMPFILE
+
 echo Dailies: >> $TMPFILE
 printbackups "$2" daily >> $TMPFILE
 echo >> $TMPFILE
