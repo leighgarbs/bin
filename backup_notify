@@ -28,7 +28,8 @@ printbackups()
     fi
 }
 
-du -sh "$BKDIR"/"$2" >> $TMPFILE
+printf "%s" "Total size " >> $TMPFILE
+du -sh "$BKDIR"/"$2" | cut -f 1 >> $TMPFILE
 echo >> $TMPFILE
 
 echo Dailies: >> $TMPFILE
