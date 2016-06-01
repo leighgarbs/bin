@@ -88,8 +88,5 @@ CMDS="cd $(pwd);$CMDS"
 # What view are we in?  We have to run CMDS in the current view on the remote
 CVIEW=$(cleartool lsview -cview | cut -d " " -f 2)
 
-#echo "$CMDS"
-#exit 1
-
 # Run Klocwork on jedi in the current view and location
 ssh jedi "cleartool setview -exec '$CMDS' $CVIEW"
