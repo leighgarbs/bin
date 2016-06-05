@@ -19,13 +19,13 @@ echo -e "\n" >> $TMPFILE
 
 printbackups()
 {
-    OUT=$(ls -l "$BKDIR"/"$1" | grep "$2" | cut -d " " -f 7-)
+    OUT=$(ls -l "$BKDIR"/"$1" | grep "$2" | tr -s " " | cut -d " " -f 6-)
     LC=$(echo "$OUT" | wc -l)
-    if [ "$LC" = "1" ]; then
-	echo none
-    else
+    #if [ "$LC" = "0" ]; then
+	#echo none
+    #else
 	echo "$OUT"
-    fi
+    #fi
 }
 
 printf "%s" "Total size " >> $TMPFILE
