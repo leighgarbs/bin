@@ -3,7 +3,9 @@
 # Prints appropriate usage
 print_usage() {
     echo "Usage: kw [-p|--project <projectname>] ..."
-    echo "       kw --push -p|--project <projectname> ..."
+    echo "       kw --push -p|--project <projectname> [-t|--tables <tablesdir>] ..."
+    echo ""
+    echo "-h or --help for this help message."
 }
 
 CMDS=
