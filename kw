@@ -2,10 +2,8 @@
 
 CMDS=
 
-LINK=
-LINK_SET=false
-
-UNLINK_SET=false
+PROJECT=
+PROJECT_SET=false
 
 BUILD=
 BUILD_SET=false
@@ -13,22 +11,13 @@ BUILD_SET=false
 while [ -n "$1" ]
 do
     case "$1" in
-	--link)
-	    LINK="$2"
-	    LINK_SET=true
+	-p | --project)
+	    PROJECT="$2"
+	    PROJECT_SET=true
 	    shift
 	    ;;
 
-	--unlink)
-	    UNLINK_SET=true
-	    ;;
-
 	*)
-	    if [ "$BUILD_SET" = "true" ]; then
-		echo "Specify only a single build" 1>&2
-		exit 1
-	    fi
-
 	    BUILD="$*"
 	    BUILD_SET=true
 	    break
@@ -44,31 +33,21 @@ if [ "$BUILD_SET" = "false" ]; then
     exit 1
 fi
 
-if [ "$LINK_SET" = "true" ] && [ "$UNLINK_SET" = "true" ]; then
-    # Get confused
-    echo Do not use --link and --unlink at the same time
-    exit 1
-fi
-
 # Add the kwcheck create command if that needs to be run
 if [ ! -d ".kwlp" ] || [ ! -d ".kwps" ]; then
     CMDS+='kwcheck create;'
 fi
 
-# Make sure the port is set properly
+# Set default project settings
+CMDS+='kwcheck set review.path=;'
 CMDS+='kwcheck set klocwork.port=8090;'
 
 # Paths to the SDAB recommended checker configuration and knowledge base
 PCONF="/vobs/Simulation/DeveloperSupport/config/analysis_profile.pconf"
 KB="/vobs/Simulation/DeveloperSupport/config/lasrs.kb"
 
-# This one command will either link or unlink the project depending on user input
-LINK_UNLINK_CMD="kwcheck set klocwork.project=$LINK"
-
-# Get the project's potential link to another project set up
-if [ "$LINK_SET" = "true" ] || [ "$UNLINK_SET" = "true" ]; then
-    CMDS+="$LINK_UNLINK_CMD;"
-fi
+# Set the link to an external project
+CMDS+="kwcheck set klocwork.project=$PROJECT;"
 
 # Generate the .pconf import command
 CMDS+="kwcheck import $PCONF;"
