@@ -20,6 +20,8 @@ for {set i 0} {$i < $argc} {incr i 1} {
     } elseif {$arg == "--to"} {
        incr i 1
        set to [lindex $argv $i]
+    } elseif {$arg == "-v"} {
+       log_user 1
     }
 }
 
