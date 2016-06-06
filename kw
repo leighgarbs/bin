@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Prints appropriate usage
+print_usage() {
+    echo "Usage: kw [-p|--project <projectname>] ..."
+    echo "       kw --push -p|--project <projectname> ..."
+}
+
 CMDS=
 
 PROJECT=
@@ -8,13 +14,33 @@ PROJECT_SET=false
 BUILD=
 BUILD_SET=false
 
+PUSH_SET=false
+
+TABLES=
+TABLES_SET=false
+
 while [ -n "$1" ]
 do
     case "$1" in
+	-h | --help)
+	    print_usage
+	    exit 0
+	    ;;
+
+	-t | --tables)
+	    TABLES="$2"
+	    TABLES_SET=true
+	    shift
+	    ;;
+
 	-p | --project)
 	    PROJECT="$2"
 	    PROJECT_SET=true
 	    shift
+	    ;;
+
+	--push)
+	    PUSH_SET=true
 	    ;;
 
 	*)
@@ -29,7 +55,12 @@ do
 done
 
 if [ "$BUILD_SET" = "false" ]; then
-    echo What build do you want to run Klocwork on?
+    echo What build would you like to analyze?
+    exit 1
+fi
+
+if [ "$PUSH_SET" = "true" ] && [ "$PROJECT_SET" = "false" ]; then
+    echo Specify a project to push to with -p or --project
     exit 1
 fi
 
