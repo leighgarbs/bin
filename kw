@@ -1,35 +1,104 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-    echo What build do you want to run Klocwork on?
+# Prints appropriate usage
+print_usage() {
+    echo "Usage: kw [-p|--project <projectname>] ..."
+    echo "       kw --push -p|--project <projectname> [-t|--tables <tablesdir>] ..."
+    echo ""
+    echo "-h or --help for this help message."
+}
+
+CMDS=
+
+PROJECT=
+PROJECT_SET=false
+
+BUILD=
+BUILD_SET=false
+
+PUSH_SET=false
+
+TABLES=
+TABLES_SET=false
+
+while [ -n "$1" ]
+do
+    case "$1" in
+	-h | --help)
+	    print_usage
+	    exit 0
+	    ;;
+
+	-t | --tables)
+	    TABLES="$2"
+	    TABLES_SET=true
+	    shift
+	    ;;
+
+	-p | --project)
+	    PROJECT="$2"
+	    PROJECT_SET=true
+	    shift
+	    ;;
+
+	--push)
+	    PUSH_SET=true
+	    ;;
+
+	*)
+	    BUILD="$*"
+	    BUILD_SET=true
+	    break
+	    ;;
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
+
+if [ "$BUILD_SET" = "false" ]; then
+    echo What build would you like to analyze?
     exit 1
 fi
 
-# What view are we in?
-CVIEW=$(cleartool lsview -cview | cut -d " " -f 2)
-
-# Will be filled in with the kwcheck create command if that needs to be run
-KWCREATE=
-if [ ! -d ".kwlp" ] || [ ! -d ".kwps" ]; then
-    KWCREATE='kwcheck create'
+if [ "$PUSH_SET" = "true" ] && [ "$PROJECT_SET" = "false" ]; then
+    echo Specify a project to push to with -p or --project
+    exit 1
 fi
 
-# Generate the .pconf import command
+# Add the kwcheck create command if that needs to be run
+if [ ! -d ".kwlp" ] || [ ! -d ".kwps" ]; then
+    CMDS+='kwcheck create;'
+fi
+
+# Set default project settings
+CMDS+='kwcheck set review.path=;'
+CMDS+='kwcheck set klocwork.port=8090;'
+
+# Paths to the SDAB recommended checker configuration and knowledge base
 PCONF="/vobs/Simulation/DeveloperSupport/config/analysis_profile.pconf"
-KWIMPORT_PCONF="kwcheck import $PCONF"
+KB="/vobs/Simulation/DeveloperSupport/config/lasrs.kb"
+
+# Set the link to an external project
+CMDS+="kwcheck set klocwork.project=$PROJECT;"
+
+# Generate the .pconf import command
+CMDS+="kwcheck import $PCONF;"
 
 # Generate the .kb import command
-KB="/vobs/Simulation/DeveloperSupport/config/lasrs.kb"
-KWIMPORT_KB="kwcheck import $KB"
+CMDS+="kwcheck import $KB;"
 
 # Generate the kwshell command
-KWSHELL="kwshell $@"
+CMDS+="kwshell $BUILD;"
 
 # Generate the kwcheck command
-KWCHECK='kwcheck run --rebuild --jobs-num 4'
+CMDS+='kwcheck run --rebuild --jobs-num 4;'
 
-# Generate the set of commands to run
-CMDS="cd $(pwd);$KWCREATE;$KWIMPORT_PCONF;$KWIMPORT_KB;$KWSHELL;$KWCHECK"
+# Change to the local directory on the remote
+CMDS="cd $(pwd);$CMDS"
 
-# Run Klocwork on jedi
+# What view are we in?  We have to run CMDS in the current view on the remote
+CVIEW=$(cleartool lsview -cview | cut -d " " -f 2)
+
+# Run Klocwork on jedi in the current view and location
 ssh jedi "cleartool setview -exec '$CMDS' $CVIEW"

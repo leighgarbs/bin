@@ -12,6 +12,9 @@ INITFILENAME_SET=false
 INITCASENUMBER=
 INITCASENUMBER_SET=false
 
+DISPLAYTYPE=
+DISPLAYTYPE_SET=false
+
 while [ -n "$1" ]
 do
     case "$1" in
@@ -30,6 +33,12 @@ do
 	--initcasenumber)
 	    INITCASENUMBER=$2
 	    INITCASENUMBER_SET=true
+	    shift
+	    ;;
+
+	--displaytype)
+	    DISPLAYTYPE=$2
+	    DISPLAYTYPE_SET=true
 	    shift
 	    ;;
 
@@ -68,6 +77,10 @@ fi
 
 if [ "$INITCASENUMBER_SET" = "true" ]; then
     printf "    InitCaseNumber $INITCASENUMBER\n"
+fi
+
+if [ "$DISPLAYTYPE_SET" = "true" ]; then
+    printf "    DisplayType $DISPLAYTYPE\n"
 fi
 
 printf "    Begin_Hardware\n"
