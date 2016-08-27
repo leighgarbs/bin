@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# This script "prunes" the library; adjusts permissions, deletes files that
+# shouldn't exist
+
+# Adjust permissions
+chown -R $USER:$USER .
+find . -name "*.zip" -exec chmod 644 {} +
+find . -name "*.mp4" -exec chmod 644 {} +
+find . -name "*.mpg" -exec chmod 644 {} +
+find . -name "*.mp3" -exec chmod 644 {} +
+find . -type d -exec chmod 755 {} +
+
+# Delete files that shouldn't exist
+find . -name .DS_Store -exec rm {} +
+find . -name desktop.ini -exec rm {} +
