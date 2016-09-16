@@ -1,0 +1,6 @@
+#!/bin/bash
+
+wake_server && \
+sleep 120 && \
+rsnapshot -c $1 sync && \
+rsnapshot -c $1 daily

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+wake_server && \
+sleep 120 && \
+rsnapshot -c $1 weekly
