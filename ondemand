@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    echo Which backup to run?
+    exit 1
+fi
+
+rsnapshot -c $1 sync && rsnapshot -c $1 ondemand
