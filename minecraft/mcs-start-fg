@@ -1,0 +1,11 @@
+#!/bin/bash
+
+WORLD=$1
+if [ -z $1 ]; then
+    WORLD=$(cat world)
+fi
+
+# Set the server to load the specified world
+ln -sf server.properties.$WORLD server.properties
+
+java -Xms1024M -Xmx1024M -jar minecraft_server.jar nogui

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+IS_RUNNING=$(ps --no-headers `cat server.pid` | wc -l)
+if ! [ "$IS_RUNNING" == "0" ]; then
+    exit
+fi
+
+./start
+exit
