@@ -1,0 +1,65 @@
+#!/bin/bash
+
+function displayhelp {
+    echo "$0 [--sync] {-t|--type backuptype} {-c configfile}"
+}
+
+SYNC=false
+
+TYPE=
+TYPE_SET=false
+
+CONFIG_FILE=
+CONFIG_FILE_SET=false
+
+while [ -n "$1" ]
+do
+    case "$1" in
+	--sync)
+	    SYNC=true
+	    ;;
+
+	-t | --type)
+	    TYPE="$2"
+	    TYPE_SET=true
+	    shift
+	    ;;
+
+	-c)
+	    CONFIG_FILE="$2"
+	    CONFIG_FILE_SET=true
+	    shift
+	    ;;
+
+	-h | --help)
+	    displayhelp
+	    exit
+	    ;;
+
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
+
+if [ $TYPE_SET == false ] || [ $CONFIG_FILE_SET == false ]; then
+    displayhelp
+    exit
+fi
+
+SYNC_RESULT=0
+
+# sync if the user wants to
+if [ $SYNC == true ]; then
+    rsnapshot -c $CONFIG_FILE sync
+    SYNC_RESULT=$?
+fi
+
+# exit if the sync didn't work
+if [ $SYNC_RESULT != 0 ]; then
+    exit 1
+fi
+
+rsnapshot -c $CONFIG_FILE $TYPE
+
+exit $?
