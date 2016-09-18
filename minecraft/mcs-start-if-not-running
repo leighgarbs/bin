@@ -5,5 +5,5 @@ if ! [ "$IS_RUNNING" == "0" ]; then
     exit
 fi
 
-./start
+./mcs-start
 exit
