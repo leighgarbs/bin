@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# Server will wake on receiving ssh traffic
-nmap -P0 -p22 tower > /dev/null
