@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Needed executables are here
+PATH=/bin:/usr/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin/linux
+
+# Soccer emails are here
+MAILPATH=/net/jedi.ndc.nasa.gov/home/lgarbs/soccer_club/email
+
+# Should the email include a roster link?
+ROSTER=true
+ROSTER_SET=false
+
+# What time is the game?
+TIME=
+TIME_SET=false
+
+# Where is the game?
+LOCATION=
+LOCATION_SET=false
+
+EMAIL_ROSTER_STRING=
+
+# Hardcoded email addresses the soccer notification emails should always use
+SMTP_RELAY=smtp.larc.nasa.gov
+FROM_EMAIL=leigh.s.garbs@nasa.gov
+#TO_EMAIL=larc-soccer@lists.nasa.gov
+TO_EMAIL=$FROM_EMAIL
+
+EMAIL_FNAME_PREFIX=soccertoday
+
+while [ -n "$1" ]
+do
+    case "$1" in
+        -r | --roster)
+            ROSTER=true
+            ROSTER_SET=true
+	    ;;
+
+        -n | --no-roster)
+            ROSTER=false
+            ROSTER_SET=true
+	    ;;
+
+        -t | --time)
+            TIME="$2"
+            TIME_SET=true
+            shift
+            ;;
+
+        -l | --location)
+            LOCATION="$2"
+            LOCATION_SET=true
+            shift
+            ;;
+
+	-h | --help)
+	    echo $0 '{-t | --time <gametime>} {-l | --location <gamelocation>} {-n | --no-roster} {-r | --roster}'
+	    exit 0
+	    ;;
+
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
+
+if [ $TIME != "530pm" ] && [ $TIME != "6pm" ] && [ $TIME != "1215pm" ]; then
+    echo Invalid time string specified
+    exit 1
+fi
+
+if [ $LOCATION != "powerplant" ] && [ $LOCATION != "nasagym" ]; then
+    echo Invalid location string specified
+    exit 1
+fi
+
+if [ $ROSTER_SET == false ]; then
+    echo Should a roster link be included?
+    exit 1
+fi
+
+# Put together the filename of the email to send
+EMAIL_FILE=$MAILPATH/"$EMAIL_FNAME_PREFIX"_"$TIME"_"$LOCATION"
+if [ $ROSTER == false ]; then
+    EMAIL_FILE="$EMAIL_FILE"_noroster
+fi
+EMAIL_FILE="$EMAIL_FILE".eml
+
+# Send the right email
+sendemail --smtp-relay $SMTP_RELAY --from $FROM_EMAIL --to $TO_EMAIL < $EMAIL_FILE
