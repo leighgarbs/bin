@@ -23,8 +23,7 @@ EMAIL_ROSTER_STRING=
 # Hardcoded email addresses the soccer notification emails should always use
 SMTP_RELAY=smtp.larc.nasa.gov
 FROM_EMAIL=leigh.s.garbs@nasa.gov
-#TO_EMAIL=larc-soccer@lists.nasa.gov
-TO_EMAIL=$FROM_EMAIL
+TO_EMAIL=larc-soccer@lists.nasa.gov
 
 EMAIL_FNAME_PREFIX=soccertoday
 
