@@ -10,6 +10,7 @@ find . -name "*.mp4" -exec chmod 644 {} +
 find . -name "*.mpg" -exec chmod 644 {} +
 find . -name "*.mp3" -exec chmod 644 {} +
 find . -name "*.ogg" -exec chmod 644 {} +
+find . -name "*.jpg" -exec chmod 644 {} +
 find . -type d -exec chmod 755 {} +
 
 # Delete files that shouldn't exist
