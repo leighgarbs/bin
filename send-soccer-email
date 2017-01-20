@@ -28,5 +28,5 @@ awk -v PS="$PLACEHOLDER_SUBJECT" \
     -v RS="$REAL_SUBJECT" \
     -v PB="$PLACEHOLDER_BODY" \
     -v RB="$REAL_BODY" \
-    '{sub(PS, RS); sub(PB, RB); print}' $EMAIL_DIR/template.eml | \
+    '{sub(PS, RS); sub(PB, RB); print}' $EMAIL_DIR/template.html | \
 sendemail --smtp-relay $SMTP_RELAY --from $FROM_EMAIL --to $TO_EMAIL
