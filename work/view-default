@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cs_default
-build_default
-run_default
+cs-default
+build-default
+run-default
