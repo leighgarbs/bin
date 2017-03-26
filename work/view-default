@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cs-default
+build-default
+run-default

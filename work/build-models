@@ -11,7 +11,7 @@ MODELS=${MODELS// /,}
 if ! [ -e Makefile.options ]; then
 
     # Initialize a Makefile.options
-    build_default
+    build-default
 fi
 
 # Make the change to a temporary file

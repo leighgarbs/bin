@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+    echo Supply the directory containing the subject and body files as the one and only argument
+    exit 1
+fi
+
+# Needed executables are here
+PATH=/bin:/usr/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin/linux
+
+# Soccer club email data is here
+EMAIL_DIR=$HOME/soccer_club/email
+
+# Suck the real subject and body into script variables
+REAL_SUBJECT=$(cat $EMAIL_DIR/$1/subject.txt)
+REAL_BODY=$(cat $EMAIL_DIR/$1/body.html | sed 's/&/\\\\&/g')
+
+# Hardcoded email addresses the soccer notification emails should always use
+SMTP_RELAY=smtp.larc.nasa.gov
+FROM_EMAIL=leigh.s.garbs@nasa.gov
+TO_EMAIL=larc-soccer@lists.nasa.gov
+
+# Random strings of text to be replaced
+PLACEHOLDER_SUBJECT=fb3d7f4680f91b203c6d
+PLACEHOLDER_BODY=4009703298ca2ddd4d76
+
+awk -v PS="$PLACEHOLDER_SUBJECT" \
+    -v RS="$REAL_SUBJECT" \
+    -v PB="$PLACEHOLDER_BODY" \
+    -v RB="$REAL_BODY" \
+    '{sub(PS, RS); sub(PB, RB); print}' $EMAIL_DIR/template.html | \
+sendemail --smtp-relay $SMTP_RELAY --from $FROM_EMAIL --to $TO_EMAIL
