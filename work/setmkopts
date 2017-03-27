@@ -32,6 +32,9 @@ AIRCRAFT_MOTION_CUEING=false
 HL20_MOTION_CUEING=
 HL20_MOTION_CUEING=false
 
+DDS_IMPLEMENTATION=
+DDS_IMPLEMENTATION_SET=false
+
 while [ -n "$1" ]
 do
     case "$1" in
@@ -94,6 +97,12 @@ do
 	    HL20_MOTION_CUEING_SET=true
 	    shift
 	    ;;
+
+	--ddsimplementation)
+	    DDS_IMPLEMENTATION=$2
+	    DDS_IMPLEMENTATION_SET=true
+	    shift
+	    ;;
     esac
 
     # We're done with the current argument, move to the next.
@@ -153,6 +162,11 @@ fi
 
 if [ "$HL20_MOTION_CUEING_SET" = true ]; then
     CMD=$CMD"sed \"s/HL20_MOTION_CUEING =.*/HL20_MOTION_CUEING=$HL20_MOTION_CUEING/\" | "
+fi
+
+if [ "$DDS_IMPLEMENTATION_SET" = true ]; then
+    CMD=$CMD"sed \"s/DDS_IMPLEMENTATION=.*/DDS_IMPLEMENTATION=$DDS_IMPLEMENTATION/\" | "
+    CMD=$CMD"sed \"s/#*DDS_IMPLEMENTATION/DDS_IMPLEMENTATION/\" | "
 fi
 
 # Append a cat to the command.  We need this in case there isn't any input, or to
