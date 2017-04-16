@@ -1,0 +1,24 @@
+#!/bin/bash
+
+INPUTFILE=
+INPUTFILE_SET=false
+
+while [ -n "$1" ]
+do
+    case "$1" in
+        *)
+            INPUTFILE="$1"
+            INPUTFILE_SET=true
+            ;;
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
+
+# Remove whitespace at the end of lines
+if [ "$INPUTFILE_SET" == true ]; then
+    sed --in-place 's/[[:space:]]\+$//' "$INPUTFILE"
+else
+    cat - | sed 's/[[:space:]]\+$//'
+fi
