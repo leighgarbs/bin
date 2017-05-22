@@ -11,9 +11,10 @@ PATH=/bin:/usr/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov
 # Soccer club email data is here
 EMAIL_DIR=$HOME/soccer_club/email
 
-# Suck the real subject and body into script variables
+# Suck the real subject, body and date into script variables
 REAL_SUBJECT=$(cat $EMAIL_DIR/$1/subject.txt)
 REAL_BODY=$(cat $EMAIL_DIR/$1/body.html | sed 's/&/\\\\&/g')
+REAL_DATE=$(date -R)
 
 # Hardcoded email addresses the soccer notification emails should always use
 SMTP_RELAY=smtp.larc.nasa.gov
@@ -23,10 +24,13 @@ TO_EMAIL=larc-soccer@lists.nasa.gov
 # Random strings of text to be replaced
 PLACEHOLDER_SUBJECT=fb3d7f4680f91b203c6d
 PLACEHOLDER_BODY=4009703298ca2ddd4d76
+PLACEHOLDER_DATE=4b8fc7c426253792d35d
 
 awk -v PS="$PLACEHOLDER_SUBJECT" \
     -v RS="$REAL_SUBJECT" \
     -v PB="$PLACEHOLDER_BODY" \
     -v RB="$REAL_BODY" \
-    '{sub(PS, RS); sub(PB, RB); print}' $EMAIL_DIR/template.html | \
+    -v PD="$PLACEHOLDER_DATE" \
+    -v RD="$REAL_DATE" \
+    '{sub(PS, RS); sub(PB, RB); sub(PD, RD); print}' $EMAIL_DIR/template.html | \
 sendemail --smtp-relay $SMTP_RELAY --from $FROM_EMAIL --to $TO_EMAIL
