@@ -1,0 +1,11 @@
+#!/bin/bash
+
+TMPLOC=/var/tmp
+
+if [ -z "$1" ]; then
+    echo What file should I expand?
+    exit 1
+fi
+
+expand "$1" > "$TMPLOC"/"$1"
+cp "$TMPLOC"/"$1" "$1"
