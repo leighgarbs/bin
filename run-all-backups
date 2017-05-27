@@ -1,0 +1,7 @@
+#!/bin/bash
+
+CONFIGDIR=$HOME/config/backup2
+
+run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.minecraft.dmz.conf
+run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.fs.secure.conf
+run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.fs.dmz.conf
