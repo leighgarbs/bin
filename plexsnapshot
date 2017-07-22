@@ -1,16 +1,16 @@
 #!/bin/bash
 
-SRC_DIR="/var/lib/plexmediaserver/Library/Application Support/Plex Media Server"
-DST_DIR="/mnt/raid/plexsnapshot"
+SRC="/var/lib/plexmediaserver/Library/Application Support/Plex Media Server"
+DST="/mnt/raid/Plex Media Server.tar.gz"
 
-# Step 1, stop plex from running so we can get a clean snapshot
+# Stop plex from running so we can get a clean snapshot
 systemctl stop plexmediaserver.service
 
-# Step 2, take the snapshot
-rsync -a -r --delete "$SRC_DIR" "$DST_DIR"
+# Take the snapshot
+tar -zcpf "$DST" "$SRC"
 
-# Step 3, start plex again, hopefully minimizing downtime
+# Start plex again, hopefully minimizing downtime
 systemctl start plexmediaserver.service
 
-# Step 4, adjust permissions so the snapshot is world-readable
-chmod -R a+r "$DST_DIR"
+# Adjust permissions so the snapshot is world-readable
+chmod a+r "$DST"
