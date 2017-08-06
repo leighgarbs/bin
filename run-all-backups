@@ -2,6 +2,15 @@
 
 CONFIGDIR=$HOME/config/backup2
 
-run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.minecraft.dmz.conf
-run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.fs.secure.conf
-run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.fs.dmz.conf
+run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.minecraft.dmz.conf &
+BACKUP_MC=$!
+
+run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.fs.secure.conf &
+BACKUP_FSSECURE=$!
+
+run-backup --sync -t ondemand -c $CONFIGDIR/rsnapshot.fs.dmz.conf &
+BACKUP_FSDMZ=$!
+
+wait $BACKUP_MC
+wait $BACKUP_FSSECURE
+wait $FSDMZ
