@@ -27,12 +27,12 @@ do
             DEBUG_SET=false
             ;;
 
-        --static)
+        --staticlibs)
             STATIC_SET=true
             SHARED_SET=false
             ;;
 
-        --shared)
+        --sharedlibs)
             SHARED_SET=true
             STATIC_SET=false
             ;;
@@ -43,18 +43,21 @@ do
     shift
 done
 
-BUILD_TYPE=
+BUILD_OPTIONS=
 
 if [ $DEBUG_SET == true ]; then
-    BUILD_TYPE=Debug
-else
-    BUILD_TYPE=Release
+    BUILD_OPTIONS+='-DCMAKE_BUILD_TYPE=Debug'
+elif [ $RELEASE_SET == true ]; then
+    BUILD_OPTIONS+='-DCMAKE_BUILD_TYPE=Release'
 fi
 
-SHARED_ON=
-if [ $SHARED_SET == true ]; then
-    SHARED_ON=ON
+BUILD_OPTIONS+=' '
+
+if [ $STATIC_SET == true ]; then
+    BUILD_OPTIONS+='-DBUILD_SHARED_LIBS=OFF'
+elif [ $SHARED_SET == true ]; then
+    BUILD_OPTIONS+='-DBUILD_SHARED_LIBS=ON'
 fi
 
 # Generate the makefile with cmake
-cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=$SHARED_ON
+cmake $BUILD_OPTIONS .
