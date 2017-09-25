@@ -9,6 +9,9 @@ RELEASE_SET=false
 STATIC_SET=false
 SHARED_SET=false
 
+DIRECTORY_SET=false
+DIRECTORY=.
+
 while [ -n "$1" ]
 do
     case "$1" in
@@ -37,6 +40,11 @@ do
             STATIC_SET=false
             ;;
 
+        *)
+            DIRECTORY_SET=true
+            DIRECTORY="$1"
+            ;;
+
     esac
 
     # We're done with the current argument, move to the next.
@@ -60,4 +68,4 @@ elif [ $SHARED_SET == true ]; then
 fi
 
 # Generate the makefile with cmake
-cmake $BUILD_OPTIONS .
+cmake $BUILD_OPTIONS $DIRECTORY
