@@ -9,7 +9,7 @@ RELEASE_SET=false
 STATIC_SET=false
 SHARED_SET=false
 
-DIRECTORY_SET=true
+DIRECTORY_SET=false
 DIRECTORY=.
 
 while [ -n "$1" ]
