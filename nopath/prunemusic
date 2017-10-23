@@ -14,6 +14,7 @@ find . -name "*.jpg" -exec chmod 644 {} +
 find . -type d -exec chmod 755 {} +
 
 # Delete files that shouldn't exist
+find . -name "._*" -exec rm {} +
 find . -name .DS_Store -exec rm {} +
 find . -name ._.DS_Store -exec rm {} +
 find . -name desktop.ini -exec rm {} +
