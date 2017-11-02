@@ -3,3 +3,5 @@
 cs-default
 build-default
 run-default
+
+cleartool lsprivate -tag $(cleartool pwv -s) | xargs rm
