@@ -3,6 +3,13 @@
 # This script "prunes" the library; adjusts permissions, deletes files that
 # shouldn't exist
 
+# Delete files that shouldn't exist
+find . -name "._*" -exec rm {} +
+find . -name __MACOSX -exec rm -rf {} +
+find . -name .DS_Store -exec rm {} +
+find . -name ._.DS_Store -exec rm {} +
+find . -name desktop.ini -exec rm {} +
+
 # Adjust permissions
 chown -R $USER:$USER .
 find . -name "*.zip" -exec chmod 644 {} +
@@ -12,9 +19,3 @@ find . -name "*.mp3" -exec chmod 644 {} +
 find . -name "*.ogg" -exec chmod 644 {} +
 find . -name "*.jpg" -exec chmod 644 {} +
 find . -type d -exec chmod 755 {} +
-
-# Delete files that shouldn't exist
-find . -name "._*" -exec rm {} +
-find . -name .DS_Store -exec rm {} +
-find . -name ._.DS_Store -exec rm {} +
-find . -name desktop.ini -exec rm {} +
