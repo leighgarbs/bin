@@ -16,10 +16,16 @@ PROJECT_SET=false
 BUILD=
 BUILD_SET=false
 
-PUSH_SET=false
+TEMPFILES=.kwbld
+TEMPFILES_SET=false
 
-TABLES=
-TABLES_SET=false
+UPDATE_SET=false
+
+PORT=8090
+
+# Paths to the SDAB recommended checker configuration and knowledge base
+PCONF="/vobs/Simulation/DeveloperSupport/config/analysis_profile.pconf"
+KB="/vobs/Simulation/DeveloperSupport/config/lasrs.kb"
 
 while [ -n "$1" ]
 do
@@ -29,9 +35,9 @@ do
 	    exit 0
 	    ;;
 
-	-t | --tables)
-	    TABLES="$2"
-	    TABLES_SET=true
+	-t | --tempfiles)
+	    TEMPFILES="$2"
+	    TEMPFILES_SET=true
 	    shift
 	    ;;
 
@@ -41,9 +47,9 @@ do
 	    shift
 	    ;;
 
-	--push)
-	    PUSH_SET=true
-	    ;;
+        -u | --update)
+            UPDATE_SET=true
+            ;;
 
 	*)
 	    BUILD="$*"
@@ -61,38 +67,69 @@ if [ "$BUILD_SET" = "false" ]; then
     exit 1
 fi
 
-if [ "$PUSH_SET" = "true" ] && [ "$PROJECT_SET" = "false" ]; then
-    echo Specify a project to push to with -p or --project
+if [ "$PROJECT_SET" = "false" ] && [ "$UPDATE_SET" = "true" ]; then
+    echo 'Only Klocwork projects can be updated; either perform a project build or do not command an update'
     exit 1
 fi
 
-# Add the kwcheck create command if that needs to be run
-if [ ! -d ".kwlp" ] || [ ! -d ".kwps" ]; then
-    CMDS+='kwcheck create;'
+if [ "$PROJECT_SET" = "true" ]; then
+
+    # Create the named project; has no effect if the project exists
+    CMDS+="kwadmin --port $PORT create-project $PROJECT;"
+
+    # Import SDAB Klocwork configuration files
+    CMDS+="kwadmin --port $PORT import-config $PROJECT $PCONF;"
+    CMDS+="kwadmin --port $PORT import-config $PROJECT $KB;"
+
+    # Make directories for temporary files
+    CMDS+="mkdir -p $TEMPFILES;"
+
+    # A special flag must be given to Klocwork if an update is commanded
+    UPDATE=
+    INCREMENTAL=
+    if [ "$UPDATE_SET" = "true" ]; then
+        UPDATE="--update"
+        INCREMENTAL="--incremental"
+    fi
+
+    KWINJECT_OUT="$TEMPFILES/kwinject.out"
+
+    # Create the kwinject command
+    CMDS+="kwinject $UPDATE -o $KWINJECT_OUT $BUILD;"
+
+    # Create the kwbuildproject command
+    CMDS+="kwbuildproject -j 4 $INCREMENTAL --url http://jedi:$PORT/$PROJECT --tables-directory $TEMPFILES/tables $KWINJECT_OUT;"
+
+    # Create the kwadmin command to load results to the project website
+    CMDS+="kwadmin --url http://jedi:$PORT/ load $PROJECT $TEMPFILES/tables;"
+
+else
+
+    # Add the kwcheck create command if that needs to be run
+    if [ ! -d ".kwlp" ] || [ ! -d ".kwps" ]; then
+        CMDS+='kwcheck create;'
+    fi
+
+    # Set default project settings
+    CMDS+='kwcheck set review.path=;'
+    CMDS+="kwcheck set klocwork.port=$PORT;"
+
+    # Set the link to an external project
+    CMDS+="kwcheck set klocwork.project=$PROJECT;"
+
+    # Generate the .pconf import command
+    CMDS+="kwcheck import $PCONF;"
+
+    # Generate the .kb import command
+    CMDS+="kwcheck import $KB;"
+
+    # Generate the kwshell command
+    CMDS+="kwshell $BUILD;"
+
+    # Generate the kwcheck command
+    CMDS+='kwcheck run --rebuild --jobs-num 4;'
+
 fi
-
-# Set default project settings
-CMDS+='kwcheck set review.path=;'
-CMDS+='kwcheck set klocwork.port=8090;'
-
-# Paths to the SDAB recommended checker configuration and knowledge base
-PCONF="/vobs/Simulation/DeveloperSupport/config/analysis_profile.pconf"
-KB="/vobs/Simulation/DeveloperSupport/config/lasrs.kb"
-
-# Set the link to an external project
-CMDS+="kwcheck set klocwork.project=$PROJECT;"
-
-# Generate the .pconf import command
-CMDS+="kwcheck import $PCONF;"
-
-# Generate the .kb import command
-CMDS+="kwcheck import $KB;"
-
-# Generate the kwshell command
-CMDS+="kwshell $BUILD;"
-
-# Generate the kwcheck command
-CMDS+='kwcheck run --rebuild --jobs-num 4;'
 
 # Change to the local directory on the remote
 CMDS="cd $(pwd);$CMDS"
