@@ -1,0 +1,5 @@
+#!/bin/sh
+
+killall -HUP mDNSResponder
+killall mDNSResponderHelper
+dscacheutil -flushcache
