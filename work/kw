@@ -13,15 +13,24 @@ CMDS=
 PROJECT=
 PROJECT_SET=false
 
+PROJECT_SYNC=
+PROJECT_SYNC_SET=false
+
 BUILD=
 BUILD_SET=false
 
 TEMPFILES=.kwbld
 TEMPFILES_SET=false
 
-UPDATE_SET=false
+INCREMENTAL_SET=false
 
 PORT=8090
+
+FORCE=
+FORCE_SET=false
+
+LOCAL=
+LOCAL_SET=false
 
 # Paths to the SDAB recommended checker configuration and knowledge base
 PCONF="/vobs/Simulation/DeveloperSupport/config/analysis_profile.pconf"
@@ -30,16 +39,24 @@ KB="/vobs/Simulation/DeveloperSupport/config/lasrs.kb"
 while [ -n "$1" ]
 do
     case "$1" in
-	-h | --help)
-	    print_usage
-	    exit 0
-	    ;;
 
-	-t | --tempfiles)
-	    TEMPFILES="$2"
-	    TEMPFILES_SET=true
-	    shift
-	    ;;
+        -f | --force)
+            FORCE="-f"
+            FORCE_SET=true
+            ;;
+
+        -h | --help)
+            print_usage
+            exit 0
+            ;;
+
+        -i | --incremental)
+            INCREMENTAL_SET=true
+            ;;
+
+        -l | --local)
+            LOCAL_SET=true
+            ;;
 
 	-p | --project)
 	    PROJECT="$2"
@@ -47,9 +64,17 @@ do
 	    shift
 	    ;;
 
-        -u | --update)
-            UPDATE_SET=true
+        -s | --sync-with)
+            PROJECT_SYNC="$2"
+            PROJECT_SYNC_SET=true
+            shift
             ;;
+
+	-t | --tempfiles)
+	    TEMPFILES="$2"
+	    TEMPFILES_SET=true
+	    shift
+	    ;;
 
 	*)
 	    BUILD="$*"
@@ -67,7 +92,7 @@ if [ "$BUILD_SET" = "false" ]; then
     exit 1
 fi
 
-if [ "$PROJECT_SET" = "false" ] && [ "$UPDATE_SET" = "true" ]; then
+if [ "$PROJECT_SET" = "false" ] && [ "$INCREMENTAL_SET" = "true" ]; then
     echo 'Only Klocwork projects can be updated; either perform a project build or do not command an update'
     exit 1
 fi
@@ -87,7 +112,7 @@ if [ "$PROJECT_SET" = "true" ]; then
     # A special flag must be given to Klocwork if an update is commanded
     UPDATE=
     INCREMENTAL=
-    if [ "$UPDATE_SET" = "true" ]; then
+    if [ "$INCREMENTAL_SET" = "true" ]; then
         UPDATE="--update"
         INCREMENTAL="--incremental"
     fi
@@ -98,10 +123,14 @@ if [ "$PROJECT_SET" = "true" ]; then
     CMDS+="kwinject $UPDATE -o $KWINJECT_OUT $BUILD;"
 
     # Create the kwbuildproject command
-    CMDS+="kwbuildproject -j 4 $INCREMENTAL --url http://jedi:$PORT/$PROJECT --tables-directory $TEMPFILES/tables $KWINJECT_OUT;"
+    CMDS+="kwbuildproject $FORCE -j 4 $INCREMENTAL --url http://jedi:$PORT/$PROJECT --tables-directory $TEMPFILES/tables $KWINJECT_OUT;"
 
     # Create the kwadmin command to load results to the project website
     CMDS+="kwadmin --url http://jedi:$PORT/ load $PROJECT $TEMPFILES/tables;"
+
+    if [ "$PROJECT_SYNC_SET" = "true" ]; then
+        CMDS+="kwxsync --port $PORT $PROJECT_SYNC $PROJECT;"
+    fi
 
 else
 
@@ -137,5 +166,15 @@ CMDS="cd $(pwd);$CMDS"
 # What view are we in?  We have to run CMDS in the current view on the remote
 CVIEW=$(cleartool lsview -cview | cut -d " " -f 2)
 
-# Run Klocwork on jedi in the current view and location
-ssh jedi "cleartool setview -exec '$CMDS' $CVIEW"
+
+if [ "$LOCAL_SET" = "true" ]; then
+
+    # Run Klocwork locally
+    cleartool setview -exec "$CMDS" "$CVIEW"
+
+else
+
+    # Run Klocwork on jedi in the current view and location
+    ssh jedi "cleartool setview -exec '$CMDS' $CVIEW"
+
+fi
