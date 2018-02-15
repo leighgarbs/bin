@@ -1,7 +1,5 @@
 #!/bin/bash
 
-TMP_MAKEFILEOPTIONS=/tmp/$USER.makefile.options
-
 # Grab the list of models
 MODELS=$@
 
@@ -15,7 +13,7 @@ if ! [ -e Makefile.options ]; then
 fi
 
 # Make the change to a temporary file
-cat Makefile.options | setmkopts --modellist=$MODELS > $TMP_MAKEFILEOPTIONS
+cat Makefile.options | setmkopts --modellist=$MODELS > Makefile.options.$$
 
 # Overwrite the Makefile.options proper with the new one
-mv $TMP_MAKEFILEOPTIONS Makefile.options
+mv Makefile.options.$$ Makefile.options

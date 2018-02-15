@@ -1,7 +1,5 @@
 #!/bin/bash
 
-TMP_MAKEFILEOPTIONS=/tmp/$USER.makefile.options
-
 # Grab the DDS implementation
 DDS_IMPLEMENTATION=$@
 
@@ -12,7 +10,7 @@ if ! [ -e Makefile.options ]; then
 fi
 
 # Make the change to a temporary file
-cat Makefile.options | setmkopts --ddsimplementation $DDS_IMPLEMENTATION > $TMP_MAKEFILEOPTIONS
+cat Makefile.options | setmkopts --ddsimplementation $DDS_IMPLEMENTATION > Makefile.options.$$
 
 # Overwrite the Makefile.options proper with the new one
-mv $TMP_MAKEFILEOPTIONS Makefile.options
+mv Makefile.options.$$ Makefile.options

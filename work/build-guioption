@@ -12,7 +12,7 @@ GUIOPTION=$1
 GUIOPTION=`echo $GUIOPTION | tr '[:lower:]' '[:upper:]'`
 
 # Make the change to a temporary file
-cat Makefile.options | setmkopts --guioption $GUIOPTION > Makefile.options.temp
+cat Makefile.options | setmkopts --guioption $GUIOPTION > Makefile.options.$$
 
 # Overwrite the Makefile.options proper with the new one
-mv Makefile.options.temp Makefile.options
+mv Makefile.options.$$ Makefile.options

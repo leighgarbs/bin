@@ -29,8 +29,10 @@ PORT=8090
 FORCE=
 FORCE_SET=false
 
-LOCAL=
-LOCAL_SET=false
+LOCAL_BUILD=
+LOCAL_BUILD_SET=false
+
+PUSH_SET=false
 
 # Paths to the SDAB recommended checker configuration and knowledge base
 PCONF="/vobs/Simulation/DeveloperSupport/config/analysis_profile.pconf"
@@ -54,8 +56,8 @@ do
             INCREMENTAL_SET=true
             ;;
 
-        -l | --local)
-            LOCAL_SET=true
+        -l | --local-build)
+            LOCAL_BUILD_SET=true
             ;;
 
 	-p | --project)
@@ -63,6 +65,10 @@ do
 	    PROJECT_SET=true
 	    shift
 	    ;;
+
+        --push)
+            PUSH_SET=true
+            ;;
 
         -s | --sync-with)
             PROJECT_SYNC="$2"
@@ -92,12 +98,12 @@ if [ "$BUILD_SET" = "false" ]; then
     exit 1
 fi
 
-if [ "$PROJECT_SET" = "false" ] && [ "$INCREMENTAL_SET" = "true" ]; then
-    echo 'Only Klocwork projects can be updated; either perform a project build or do not command an update'
+if [ "$PROJECT_SET" = "false" ] && [ "$PUSH_SET" = "true" ]; then
+    echo 'Use -p to specify a project to push to'
     exit 1
 fi
 
-if [ "$PROJECT_SET" = "true" ]; then
+if [ "$PROJECT_SET" = "true" ] && [ "$PUSH_SET" = "true" ]; then
 
     # Create the named project; has no effect if the project exists
     CMDS+="kwadmin --port $PORT create-project $PROJECT;"
@@ -167,7 +173,7 @@ CMDS="cd $(pwd);$CMDS"
 CVIEW=$(cleartool lsview -cview | cut -d " " -f 2)
 
 
-if [ "$LOCAL_SET" = "true" ]; then
+if [ "$LOCAL_BUILD_SET" = "true" ]; then
 
     # Run Klocwork locally
     cleartool setview -exec "$CMDS" "$CVIEW"

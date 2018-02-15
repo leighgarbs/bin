@@ -7,7 +7,7 @@ PLUGINS=$@
 PLUGINS=${PLUGINS// /,}
 
 # Make the change to a temporary file
-cat Makefile.options | setmkopts --pluginslist=$PLUGINS > Makefile.options.temp
+cat Makefile.options | setmkopts --pluginslist=$PLUGINS > Makefile.options.$$
 
 # Overwrite the Makefile.options proper with the new one
-mv Makefile.options.temp Makefile.options
+mv Makefile.options.$$ Makefile.options
