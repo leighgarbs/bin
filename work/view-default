@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cs-default
-cleartool lsprivate -tag $(cleartool pwv -s) | xargs rm -rf
+rm-all-viewprivate
