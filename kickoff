@@ -72,7 +72,7 @@ fi
 
 # Run the job, drop a .kickoff file in the user's home dir and then email them;
 # do this all in the background
-(TIME=$(time(nohup "$JOB" > /dev/null 2> /dev/null < /dev/null) 2>&1); \
+(TIME=$(time(nohup $JOB > /dev/null 2> /dev/null < /dev/null) 2>&1); \
     MAIL_BODY="$JOB\n$TIME"; \
     echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME; \
     echo -e "$HEADER$MAIL_BODY" | \
