@@ -1,19 +1,56 @@
 #!/bin/bash
 
+# Prints appropriate usage
+print_usage() {
+    echo "Usage: $(basename $0) [ -h | --help ] [ --clear ] <job>"
+}
+
 if [ $# -eq 0 ]; then
-    echo What should I kick off?
+    print_usage
     exit 1
 fi
+
+JOB=
+JOB_SET=false
+
+while [ -n "$1" ]
+do
+    case "$1" in
+
+        --clear)
+            rm -f ~/.kickoff*
+            ;;
+
+        -h | --help)
+            print_usage
+            exit 0
+            ;;
+
+        *)
+            JOB="$*"
+            JOB_SET=true
+            break
+            ;;
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
 
 if [ -z "$KICKOFF_DEST" ]; then
     echo Please set KICKOFF_DEST to a valid email address.
     exit 1
 fi
 
+if [ "$JOB_SET" = "false" ]; then
+    echo What should I kick off?
+    exit 1
+fi
+
 FROM=$(whoami)@$(hostname)
 
 # Come up with a short name to describe this job
-SHORTNAME=$(echo $@ | cut -d " " -f 1)$$
+SHORTNAME=$(echo "$JOB" | cut -d " " -f 1)$$
 
 # Print the job name so the user can see it
 echo $SHORTNAME
@@ -33,10 +70,10 @@ if [ -n "$SMTP_RELAY" ]; then
     SMTP_RELAY_CMD="--smtp-relay $SMTP_RELAY"
 fi
 
-# Run the job, drop a .kickoff file in the user's home dir and then email them; do 
-# this all in the background
-(TIME=$(time(nohup "$@" > /dev/null 2> /dev/null < /dev/null) 2>&1); \
-    MAIL_BODY="$@\n$TIME"; \
+# Run the job, drop a .kickoff file in the user's home dir and then email them;
+# do this all in the background
+(TIME=$(time(nohup "$JOB" > /dev/null 2> /dev/null < /dev/null) 2>&1); \
+    MAIL_BODY="$JOB\n$TIME"; \
     echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME; \
     echo -e "$HEADER$MAIL_BODY" | \
     sendemail --from $FROM --to $KICKOFF_DEST $SMTP_RELAY_CMD) &
