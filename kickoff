@@ -13,12 +13,20 @@ fi
 JOB=
 JOB_SET=false
 
+CLEAR_SET=false
+
+NOEMAIL_SET=false
+
 while [ -n "$1" ]
 do
     case "$1" in
 
         --clear)
-            rm -f ~/.kickoff*
+            CLEAR_SET=true
+            ;;
+
+        --noemail)
+            NOEMAIL_SET=true
             ;;
 
         -h | --help)
@@ -40,6 +48,13 @@ done
 if [ -z "$KICKOFF_DEST" ]; then
     echo Please set KICKOFF_DEST to a valid email address.
     exit 1
+fi
+
+if [ "$CLEAR_SET" = "true" ]; then
+    rm -f ~/.kickoff*
+    if [ "$JOB_SET" = "false" ]; then
+        exit 0
+    fi
 fi
 
 if [ "$JOB_SET" = "false" ]; then
@@ -70,10 +85,17 @@ if [ -n "$SMTP_RELAY" ]; then
     SMTP_RELAY_CMD="--smtp-relay $SMTP_RELAY"
 fi
 
-# Run the job, drop a .kickoff file in the user's home dir and then email them;
-# do this all in the background
-(TIME=$(time(nohup $JOB > /dev/null 2> /dev/null < /dev/null) 2>&1); \
-    MAIL_BODY="$JOB\n$TIME"; \
-    echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME; \
-    echo -e "$HEADER$MAIL_BODY" | \
-    sendemail --from $FROM --to $KICKOFF_DEST $SMTP_RELAY_CMD) &
+# Run the job and drop a .kickoff file in the user's home dir
+# Send them an email if they haven't explicitly turned that off
+# Do this all in the background
+if [ "$NOEMAIL_SET" = "true" ]; then
+    (TIME=$(time(nohup $JOB > /dev/null 2> /dev/null < /dev/null) 2>&1); \
+        MAIL_BODY="$JOB\n$TIME"; \
+        echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME) &
+else
+    (TIME=$(time(nohup $JOB > /dev/null 2> /dev/null < /dev/null) 2>&1); \
+        MAIL_BODY="$JOB\n$TIME"; \
+        echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME; \
+        echo -e "$HEADER$MAIL_BODY" | \
+        sendemail --from $FROM --to $KICKOFF_DEST $SMTP_RELAY_CMD) &
+fi
