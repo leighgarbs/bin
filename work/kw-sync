@@ -1,0 +1,3 @@
+#!/bin/bash
+
+kwxsync --port 8090 $1 $2
