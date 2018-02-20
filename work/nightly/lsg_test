@@ -1,0 +1,17 @@
+#!/bin/tcsh
+
+# Reset this view back to default; gets rid of all view-private files, among
+# other things
+view-default
+
+# Set build options
+cd /vobs/aircraft++
+build-default
+build-models octocopter
+build-plugins serialportparser matlab2010a
+build-buildoption PRODUCTION
+
+# Actually run the build
+kw -l -f -p lsg_test --push -t /klocwork_data/scratch/lsg_test clearmake -B ~/.bldhost.jedi.ndc.nasa.gov -V sim
+kwxsync --port 8090 LaSRS_Core lsg_test
+kwxsync --port 8090 GenericUav lsg_test

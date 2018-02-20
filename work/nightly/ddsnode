@@ -1,0 +1,21 @@
+#!/bin/tcsh
+
+# Reset this view back to default; gets rid of all view-private files, among
+# other things
+view-default
+
+# Set toolbox build options
+cd /vobs/toolbox++
+build-default
+build-buildoption PRODUCTION
+
+# Set DDS redistributable build options
+cd /vobs/lasrs++/Dds/redist
+build-default
+build-buildoption PRODUCTION
+build-ddsimplementation OPEN_SPLICE
+
+# Actually run the build
+cd /vobs/UAV/DdsNode
+kw-nightly DdsNode "make -B ddsnode"
+kw-sync DdsNode LaSRS_Core

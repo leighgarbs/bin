@@ -1,0 +1,16 @@
+#!/bin/tcsh
+
+# Reset this view back to default; gets rid of all view-private files, among
+# other things
+view-default
+
+# Set build options
+cd /vobs/lasrs++/Dds/redist
+build-default
+build-buildoption PRODUCTION
+build-ddsimplementation RTI_CONNEXT
+
+# Actually run the build
+kw-nightly DDS_Redistributable_Connext "make -B"
+kw-sync DDS_Redistributable_Connext LaSRS_Core
+kw-sync DDS_Redistributable_Connext DDS_Redistributable_OpenSplice
