@@ -73,7 +73,8 @@ if [ "$RETURN" != 0 ] && [ "$EMAIL_SET" == "true" ]; then
     fi
 
     # Send the email
-    echo "$(SUBJECT)$(BODY)" | sendemail --to "$EMAIL" --smtp-relay smtp.larc.nasa.gov
+    echo "${SUBJECT}
+${BODY}" | sendemail --to "$EMAIL" --smtp-relay smtp.larc.nasa.gov
 fi
 
 exit "$RETURN"
