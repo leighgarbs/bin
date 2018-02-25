@@ -17,7 +17,7 @@ do
     case "$1" in
 
         -c | --ccbuild)
-            CC_BUILD_SET=true
+            CCBUILD_SET=true
             ;;
 
         -e | --email)
@@ -64,7 +64,7 @@ mv /tmp/build.error .
 # If the build failed and an email address was provided, email a failure report
 if [ "$RETURN" != 0 ] && [ "$EMAIL_SET" == "true" ]; then
 
-    SUBJECT="Subject:$BUILDSRC failed"
+    SUBJECT="Subject:$BUILDSRC nightly build failed"
 
     if [ -f "build.error" ]; then
         BODY=`cat build.error`
