@@ -1,7 +1,7 @@
 #!/bin/bash
 
 print_usage() {
-    echo "Usage: runbuild [ -e | --email <address> ] [ -c | --ccbuild ] <build command>"
+    echo "Usage: runbuild [ -e | --email <address> ] [ -c | --ccbuild ] <source script>"
 }
 
 EMAIL=
@@ -9,8 +9,8 @@ EMAIL_SET=false
 
 CCBUILD_SET=false
 
-BUILDCMD=
-BUILDCMD_SET=false
+BUILDSRC=
+BUILDSRC_SET=false
 
 while [ -n "$1" ]
 do
@@ -32,8 +32,8 @@ do
             ;;
 
         *)
-            BUILDCMD="$*"
-            BUILDCMD_SET=true
+            BUILDSRC="$*"
+            BUILDSRC_SET=true
             break
             ;;
     esac
@@ -42,7 +42,7 @@ do
     shift
 done
 
-if [ "$BUILDCMD_SET" == "false" ]; then
+if [ "$BUILDSRC_SET" == "false" ]; then
     print_usage
     exit 1
 fi
@@ -53,11 +53,27 @@ if [ "$CCBUILD_SET" == "true" ]; then
     view-default
 fi
 
-# Run the given build script and save the return code
-"$BUILDCMD" > build.out 2> build.error
+# Source the given build script and save the return code
+. "$BUILDSRC" > /tmp/build.out 2> /tmp/build.error
 RETURN="$?"
+
+# Move the build output files into wherever we are now
+mv /tmp/build.out .
+mv /tmp/build.error .
 
 # If the build failed and an email address was provided, email a failure report
 if [ "$RETURN" != 0 ] && [ "$EMAIL_SET" == "true" ]; then
-    echo sending email
+
+    SUBJECT="Subject:$BUILDSRC failed"
+
+    if [ -f "build.error" ]; then
+        BODY=`cat build.error`
+    else
+        BODY="Build error output not available"
+    fi
+
+    # Send the email
+    echo "$(SUBJECT)$(BODY)" | sendemail --to "$EMAIL" --smtp-relay smtp.larc.nasa.gov
 fi
+
+exit "$RETURN"
