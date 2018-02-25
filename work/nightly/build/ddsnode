@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/bash
 
 # Reset this view back to default; gets rid of all view-private files, among
 # other things
@@ -17,5 +17,4 @@ build-ddsimplementation OPEN_SPLICE
 
 # Actually run the build
 cd /vobs/UAV/DdsNode
-kw-nightly DdsNode "make -B ddsnode"
-kw-sync DdsNode LaSRS_Core
+make -B ddsnode > build.out 2> build.error
