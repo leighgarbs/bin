@@ -1,3 +1,0 @@
-#!/bin/tcsh
-
-kw -l -f -p $1 --push -t /klocwork_data/scratch/$1 "$2"
