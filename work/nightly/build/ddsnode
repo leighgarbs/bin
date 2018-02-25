@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Reset this view back to default; gets rid of all view-private files, among
-# other things
-view-default
-
 # Set toolbox build options
 cd /vobs/toolbox++
 build-default
@@ -17,4 +13,4 @@ build-ddsimplementation OPEN_SPLICE
 
 # Actually run the build
 cd /vobs/UAV/DdsNode
-make -B ddsnode > build.out 2> build.error
+make -B ddsnode

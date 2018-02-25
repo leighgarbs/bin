@@ -1,0 +1,63 @@
+#!/bin/bash
+
+print_usage() {
+    echo "Usage: runbuild [ -e | --email <address> ] [ -c | --ccbuild ] <build command>"
+}
+
+EMAIL=
+EMAIL_SET=false
+
+CCBUILD_SET=false
+
+BUILDCMD=
+BUILDCMD_SET=false
+
+while [ -n "$1" ]
+do
+    case "$1" in
+
+        -c | --ccbuild)
+            CC_BUILD_SET=true
+            ;;
+
+        -e | --email)
+            EMAIL_SET=true
+            EMAIL="$2"
+            shift
+            ;;
+
+        -h | --help)
+            print_usage
+            exit 0
+            ;;
+
+        *)
+            BUILDCMD="$*"
+            BUILDCMD_SET=true
+            break
+            ;;
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
+
+if [ "$BUILDCMD_SET" == "false" ]; then
+    print_usage
+    exit 1
+fi
+
+if [ "$CCBUILD_SET" == "true" ]; then
+    # Reset this view back to default; gets rid of all view-private files, among
+    # other things
+    view-default
+fi
+
+# Run the given build script and save the return code
+"$BUILDCMD" > build.out 2> build.error
+RETURN="$?"
+
+# If the build failed and an email address was provided, email a failure report
+if [ "$RETURN" != 0 ] && [ "$EMAIL_SET" == "true" ]; then
+    echo sending email
+fi
