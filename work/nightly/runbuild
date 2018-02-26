@@ -54,27 +54,26 @@ if [ "$CCBUILD_SET" == "true" ]; then
 fi
 
 # Source the given build script and save the return code
-. "$BUILDSRC" > /tmp/build.out 2> /tmp/build.error
+. "$BUILDSRC" > /tmp/build.out.$$ 2> /tmp/build.error.$$
 RETURN="$?"
 
 # Move the build output files into wherever we are now
-mv /tmp/build.out .
-mv /tmp/build.error .
+mv /tmp/build.out.$$ build.out
+mv /tmp/build.error.$$ build.error
 
 # If the build failed and an email address was provided, email a failure report
 if [ "$RETURN" != 0 ] && [ "$EMAIL_SET" == "true" ]; then
 
-    SUBJECT="Subject:$BUILDSRC nightly build failed"
+    SUBJECT="Subject:$BUILDSRC build failed"
 
-    if [ -f "build.error" ]; then
+    if [ -f build.error ]; then
         BODY=`cat build.error`
     else
         BODY="Build error output not available"
     fi
 
     # Send the email
-    echo "${SUBJECT}
-${BODY}" | sendemail --to "$EMAIL" --smtp-relay smtp.larc.nasa.gov
+    echo -e "$SUBJECT\n\n$BODY" | sendemail --to "$EMAIL" --smtp-relay smtp.larc.nasa.gov
 fi
 
 exit "$RETURN"
