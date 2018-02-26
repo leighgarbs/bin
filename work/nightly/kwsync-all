@@ -1,3 +1,3 @@
 #!/bin/bash
 
-kw-sync Bat4 DdsNode DDS_Redistributable_Connext DDS_Redistributable_OpenSplice GenericUav HumanObserver LvcInterface Octocopter
+kw-sync Bat4 DdsNode DDS_Redistributable_Connext DDS_Redistributable_OpenSplice GenericUav HumanObserver LvcInterface Octocopter LaSRS_Core
