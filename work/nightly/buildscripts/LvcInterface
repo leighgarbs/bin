@@ -1,8 +1,4 @@
-#!/bin/tcsh
-
-# Reset this view back to default; gets rid of all view-private files, among
-# other things
-view-default
+#!/bin/bash
 
 # Set toolbox build options
 cd /vobs/toolbox++
@@ -17,5 +13,4 @@ build-ddsimplementation OPEN_SPLICE
 
 # Actually run the build
 cd /vobs/UAV/LvcInterface
-kw-nightly LvcInterface "make -B production"
-kw-sync LvcInterface LaSRS_Core
+make -B production

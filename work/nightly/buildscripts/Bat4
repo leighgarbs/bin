@@ -1,8 +1,4 @@
-#!/bin/tcsh
-
-# Reset this view back to default; gets rid of all view-private files, among
-# other things
-view-default
+#!/bin/bash
 
 # Set build options
 cd /vobs/aircraft++
@@ -12,6 +8,4 @@ build-plugins serialportparser matlab2010a
 build-buildoption PRODUCTION
 
 # Actually run the build
-kw-nightly Bat4 "clearmake -B ~/.bldhost.jedi.ndc.nasa.gov -V sim"
-kw-sync Bat4 LaSRS_Core
-kw-sync Bat4 GenericUav
+clearmake -B ~/.bldhost.jedi.ndc.nasa.gov -V sim
