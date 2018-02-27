@@ -105,8 +105,10 @@ fi
 
 if [ "$PROJECT_SET" = "true" ] && [ "$PUSH_SET" = "true" ]; then
 
-    # Create the named project; has no effect if the project exists
-    CMDS+="kwadmin --port $PORT create-project $PROJECT;"
+    # Create the project if it doesn't already exist
+    if ! [ $(kwadmin --port $PORT list-projects | grep $PROJECT) ]; then
+        CMDS+="kwadmin --port $PORT create-project $PROJECT;"
+    fi
 
     # Import SDAB Klocwork configuration files
     CMDS+="kwadmin --port $PORT import-config $PROJECT $PCONF;"
