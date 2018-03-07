@@ -54,7 +54,7 @@ if [ "$CCBUILD_SET" == "true" ]; then
 fi
 
 # Source the given build script and save the return code
-. "$BUILDSRC" > /tmp/build.out.$$ 2> /tmp/build.error.$$
+"$BUILDSRC" > /tmp/build.out.$$ 2> /tmp/build.error.$$
 RETURN="$?"
 
 # Move the build output files into wherever we are now
