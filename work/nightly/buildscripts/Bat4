@@ -3,7 +3,7 @@
 # Set build options
 cd /vobs/aircraft++
 build-default
-build-models bat4
+build-models genericuav bat4
 build-plugins serialportparser matlab2010a
 build-buildoption PRODUCTION
 

@@ -3,7 +3,7 @@
 # Set build options
 cd /vobs/aircraft++
 build-default
-build-models octocopter
+build-models genericuav octocopter
 build-plugins serialportparser matlab2010a
 build-buildoption PRODUCTION
 
