@@ -13,7 +13,7 @@ MODELLIST+='
 
 if ! [ -e siminit ]; then
     # Initialize a siminit
-    run_default
+    run-default
 fi
 
 
