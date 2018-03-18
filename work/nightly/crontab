@@ -1,0 +1,33 @@
+SHELL=/bin/tcsh
+PATH=/bin:/usr/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin/work:/home/lgarbs/bin/work/nightly:/home/lgarbs/bin/work/nightly/buildscripts:/opt/ibm/RationalSDLC/clearcase/bin:/opt/Klocwork/Server/bin:/opt/Klocwork/User/bin
+
+# soccertoday-5pm-powerplant
+# soccertoday-5pm-powerplant-noroster
+# soccertoday-530pm-powerplant
+# soccertoday-530pm-powerplant-noroster
+# soccertoday-6pm-nasagym
+# soccertoday-6pm-nasagym-noroster
+# soccertomorrow-12pm-nasagym
+# nosoccertoday-centerclosed
+
+# TUESDAY
+0 9 * * 2 send-soccer-email soccertoday-5pm-powerplant
+
+# THURSDAY
+0 9 * * 4 send-soccer-email soccertoday-5pm-powerplant
+
+# FRIDAY
+0 9 * * 5 send-soccer-email soccertoday-6pm-nasagym
+
+
+0 20 * * * runnightly Bat4                           lsg_nightly1
+0 20 * * * runnightly DDS_Redistributable_OpenSplice lsg_nightly2
+0 20 * * * runnightly DDS_Redistributable_Connext    lsg_nightly3
+0 20 * * * runnightly DdsNode                        lsg_nightly4
+0 20 * * * runnightly GenericUav                     lsg_nightly5
+0 20 * * * runnightly HumanObserver                  lsg_nightly6
+0 20 * * * runnightly LvcInterface                   lsg_nightly7
+0 20 * * * runnightly Octocopter                     lsg_nightly8
+
+# Do an hourly sync of Klocwork issues
+0 * * * * kwsync-all
