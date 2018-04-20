@@ -22,7 +22,7 @@ done
 cd /vobs/aircraft++
 build-default
 build-models genericuav bat4
-build-plugins serialportparser matlab2010a
+build-plugins matlab2010a
 build-buildoption "$BUILD_OPTION"
 
 # Actually run the build

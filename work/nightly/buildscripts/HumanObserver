@@ -22,7 +22,6 @@ done
 cd /vobs/aircraft++
 build-default
 build-models humanobserver
-build-plugins serialportparser
 build-buildoption "$BUILD_OPTION"
 
 # Actually run the build
