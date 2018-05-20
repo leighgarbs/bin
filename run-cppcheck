@@ -1,3 +1,38 @@
 #!/bin/bash
 
-cppcheck --enable=all --std=c11 --std=c++11 --std=posix "$@"
+# Default arguments
+CPPCHECK_ARGS="--enable=all --std=posix --inconclusive"
+
+# Additionally define these arguments if run in Jenkins configuration (Jenkins
+# cppcheck plugin only understands XML-formatted cppcheck output)
+CPPCHECK_ARGS_JENKINS="--xml --xml-version=2"
+
+CONFIG_JENKINS_SET=false
+
+while [ -n "$1" ]
+do
+    case "$1" in
+        -J)
+            CONFIG_JENKINS_SET=true
+            ;;
+
+        *)
+            # If we see something not explicitly recognized by this script stop
+            # processing arguments and pass remaining arguments directly to
+            # cppcheck
+            break
+            ;;
+
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
+
+if [ "$CONFIG_JENKINS_SET" == true ]; then
+    CPPCHECK_ARGS+=" $CPPCHECK_ARGS_JENKINS"
+fi
+
+CPPCHECK_ARGS+=" $@"
+
+cppcheck $CPPCHECK_ARGS .
