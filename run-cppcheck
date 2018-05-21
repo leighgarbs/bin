@@ -5,7 +5,7 @@ CPPCHECK_ARGS="--enable=all --std=posix --inconclusive"
 
 # Additionally define these arguments if run in Jenkins configuration (Jenkins
 # cppcheck plugin only understands XML-formatted cppcheck output)
-CPPCHECK_ARGS_JENKINS="--xml --xml-version=2"
+CPPCHECK_ARGS_JENKINS="--xml --xml-version=2 --error-exitcode=1"
 
 CONFIG_JENKINS_SET=false
 
