@@ -11,23 +11,25 @@ PATH=/bin:/usr/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov
 # nosoccertoday-centerclosed
 
 # TUESDAY
-0 9 * * 2 send-soccer-email soccertoday-5pm-powerplant
+0 9 * * 2 send-soccer-email soccertoday-530pm-powerplant
 
 # THURSDAY
-0 9 * * 4 send-soccer-email soccertoday-5pm-powerplant
+0 9 * * 4 send-soccer-email soccertoday-530pm-powerplant
 
 # FRIDAY
-0 9 * * 5 send-soccer-email soccertoday-6pm-nasagym
+#0 9 * * 5 send-soccer-email soccertoday-6pm-nasagym
 
 
-0 20 * * * runnightly Bat4                           lsg_nightly1
-0 20 * * * runnightly DDS_Redistributable_OpenSplice lsg_nightly2
-0 20 * * * runnightly DDS_Redistributable_Connext    lsg_nightly3
-0 20 * * * runnightly DdsNode                        lsg_nightly4
-0 20 * * * runnightly GenericUav                     lsg_nightly5
-0 20 * * * runnightly HumanObserver                  lsg_nightly6
-0 20 * * * runnightly LvcInterface                   lsg_nightly7
-0 20 * * * runnightly Octocopter                     lsg_nightly8
+0 20 * * 1-5 runnightly Bat4                           lsg_nightly1
+0 20 * * 1-5 runnightly DDS_Redistributable_OpenSplice lsg_nightly2
+0 20 * * 1-5 runnightly DDS_Redistributable_Connext    lsg_nightly3
+0 20 * * 1-5 runnightly DdsNode                        lsg_nightly4
+0 20 * * 1-5 runnightly GenericUav                     lsg_nightly5
+0 20 * * 1-5 runnightly HumanObserver                  lsg_nightly6
+0 20 * * 1-5 runnightly LvcInterface                   lsg_nightly7
+0 20 * * 1-5 runnightly Octocopter                     lsg_nightly8
+0 20 * * 1-5 runnightly brsddsfwd-inside               lsg_nightly9
+0 20 * * 1-5 runnightly brsddsfwd-outside              lsg_nightly10
 
 # Do an hourly sync of Klocwork issues
-0 * * * * kwsync-all
+0 * * * 1-5 kwsync-all
