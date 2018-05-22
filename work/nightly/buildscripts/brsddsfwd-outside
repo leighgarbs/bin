@@ -30,6 +30,6 @@ build-ddsimplementation OPEN_SPLICE
 build-buildoption "$BUILD_OPTION"
 
 # Actually run the build
-cd /vobs/UAV/brsddsfwd-outside
+cd /vobs/UAV/brsddsfwd/brsddsfwd-outside
 run-cmake
 make
