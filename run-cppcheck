@@ -1,19 +1,19 @@
 #!/bin/bash
 
 # Default arguments
-CPPCHECK_ARGS="--enable=all --std=posix --inconclusive"
+ARGS="--enable=all --std=posix --inconclusive"
 
 # Additionally define these arguments if run in Jenkins configuration (Jenkins
 # cppcheck plugin only understands XML-formatted cppcheck output)
-CPPCHECK_ARGS_JENKINS="--xml --xml-version=2"
+JENKINS_ARGS="--xml --xml-version=2"
 
-CONFIG_JENKINS_SET=false
+USE_JENKINS_ARGS=false
 
 while [ -n "$1" ]
 do
     case "$1" in
         -J)
-            CONFIG_JENKINS_SET=true
+            USE_JENKINS_ARGS=true
             ;;
 
         *)
@@ -29,10 +29,10 @@ do
     shift
 done
 
-if [ "$CONFIG_JENKINS_SET" == true ]; then
-    CPPCHECK_ARGS+=" $CPPCHECK_ARGS_JENKINS"
+if [ "$USE_JENKINS_ARGS" == true ]; then
+    ARGS+=" $JENKINS_ARGS"
 fi
 
-CPPCHECK_ARGS+=" $@"
+ARGS+=" $@"
 
-cppcheck $CPPCHECK_ARGS .
+cppcheck $ARGS

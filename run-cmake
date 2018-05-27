@@ -41,8 +41,10 @@ do
             ;;
 
         *)
-            DIRECTORY_SET=true
-            DIRECTORY="$1"
+            # If we see something not explicitly recognized by this script stop
+            # processing arguments and pass remaining arguments directly to
+            # cmake
+            break;
             ;;
 
     esac
@@ -51,21 +53,23 @@ do
     shift
 done
 
-BUILD_OPTIONS=
+ARGS=
 
 if [ $DEBUG_SET == true ]; then
-    BUILD_OPTIONS+='-DCMAKE_BUILD_TYPE=Debug'
+    ARGS+='-DCMAKE_BUILD_TYPE=Debug'
 elif [ $RELEASE_SET == true ]; then
-    BUILD_OPTIONS+='-DCMAKE_BUILD_TYPE=Release'
+    ARGS+='-DCMAKE_BUILD_TYPE=Release'
 fi
 
-BUILD_OPTIONS+=' '
+ARGS+=' '
 
 if [ $STATIC_SET == true ]; then
-    BUILD_OPTIONS+='-DBUILD_SHARED_LIBS=OFF'
+    ARGS+='-DBUILD_SHARED_LIBS=OFF'
 elif [ $SHARED_SET == true ]; then
-    BUILD_OPTIONS+='-DBUILD_SHARED_LIBS=ON'
+    ARGS+='-DBUILD_SHARED_LIBS=ON'
 fi
 
+ARGS+=" $@"
+
 # Generate the makefile with cmake
-cmake $BUILD_OPTIONS $DIRECTORY
+cmake $ARGS
