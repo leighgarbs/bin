@@ -31,5 +31,5 @@ build-buildoption "$BUILD_OPTION"
 
 # Actually run the build
 cd /vobs/UAV/brsddsfwd/brsddsfwd-inside
-run-cmake
+run-cmake .
 make
