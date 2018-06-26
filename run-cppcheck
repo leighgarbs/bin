@@ -8,13 +8,13 @@ ARGS="--enable=all --std=posix --inconclusive"
 JENKINS_ARGS="--xml --xml-version=2 "
 JENKINS_ARGS+=`cat .cppcheck-ignore | sed "s/.*/-i &/" | tr "\n" " "`
 
-USE_JENKINS_ARGS=false
+JENKINS_MODE=false
 
 while [ -n "$1" ]
 do
     case "$1" in
         -J)
-            USE_JENKINS_ARGS=true
+            JENKINS_MODE=true
             ;;
 
         *)
@@ -30,10 +30,15 @@ do
     shift
 done
 
-if [ "$USE_JENKINS_ARGS" == true ]; then
+if [ "$JENKINS_MODE" == true ]; then
     ARGS+=" $JENKINS_ARGS"
 fi
 
 ARGS+=" $@"
 
-cppcheck $ARGS
+if [ "$JENKINS_MODE" == true ]; then
+    cppcheck $ARGS 2> cppcheck.xml
+    ! grep -E '(severity="error"|severity="warning")' cppcheck.xml > /dev/null
+else
+    cppcheck $ARGS
+fi
