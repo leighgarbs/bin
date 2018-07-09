@@ -29,9 +29,6 @@ PORT=8090
 FORCE=
 FORCE_SET=false
 
-LOCAL_BUILD=
-LOCAL_BUILD_SET=false
-
 PUSH_SET=false
 
 # Paths to the SDAB recommended checker configuration and knowledge base
@@ -54,10 +51,6 @@ do
 
         -i | --incremental)
             INCREMENTAL_SET=true
-            ;;
-
-        -l | --local-build)
-            LOCAL_BUILD_SET=true
             ;;
 
 	-p | --project)
@@ -174,15 +167,5 @@ CMDS="cd $(pwd);$CMDS"
 # What view are we in?  We have to run CMDS in the current view on the remote
 CVIEW=$(cleartool lsview -cview | cut -d " " -f 2)
 
-
-if [ "$LOCAL_BUILD_SET" = "true" ]; then
-
-    # Run Klocwork locally
-    cleartool setview -exec "$CMDS" "$CVIEW"
-
-else
-
-    # Run Klocwork on jedi in the current view and location
-    ssh jedi "cleartool setview -exec '$CMDS' $CVIEW"
-
-fi
+# Run Klocwork locally
+cleartool setview -exec "$CMDS" "$CVIEW"
