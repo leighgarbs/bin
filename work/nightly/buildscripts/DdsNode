@@ -18,6 +18,8 @@ do
     shift
 done
 
+view-default
+
 # Set toolbox build options
 cd /vobs/toolbox++
 build-default

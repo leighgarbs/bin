@@ -18,6 +18,8 @@ do
     shift
 done
 
+view-default
+
 # Set build options
 cd /vobs/aircraft++
 build-default
