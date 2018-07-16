@@ -28,7 +28,7 @@ do
 done
 
 if [ "$VIEW_SET" == "true" ]; then
-    cleartool setview -exec "runkwbuild $NIGHTLY" "$VIEW" > /dev/null
+    cleartool setview -exec "runkwbuild $NIGHTLY > /dev/null" "$VIEW"
 else
     runkwbuild "$NIGHTLY" > /dev/null
 fi

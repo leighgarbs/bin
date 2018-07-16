@@ -43,17 +43,17 @@ fi
 
 if [ -f "$BUILDSRC" ]; then
     # Source the given build script and save the return code
-    . "$BUILDSRC" > /tmp/build.out.$$ 2> /tmp/build.error.$$
+    . "$BUILDSRC" > /dev/null 2> /dev/null
     RETURN="$?"
 else
     # Evaluate BUILDSRC as it must be a command
-    eval "$BUILDSRC" > /tmp/build.out.$$ 2> /tmp/build.error.$$
+    eval "$BUILDSRC" > /dev/null 2> /dev/null
     RETURN="$?"
 fi
 
 # Move the build output files into wherever we are now
-mv /tmp/build.out.$$ build.out
-mv /tmp/build.error.$$ build.error
+#mv /tmp/build.out.$$ build.out
+#mv /tmp/build.error.$$ build.error
 
 # If the build failed and an email address was provided, email a failure report
 if [ "$RETURN" != 0 ] && [ "$EMAIL_SET" == "true" ]; then

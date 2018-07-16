@@ -26,6 +26,5 @@ build-default
 build-ddsimplementation RTI_CONNEXT
 build-buildoption "$BUILD_OPTION"
 
-
 # Actually run the build
-make -B
+make -B > build.out 2> build.error
