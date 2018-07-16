@@ -2,10 +2,11 @@
 
 # Prints appropriate usage
 print_usage() {
+
     echo "Usage: kw [-p|--project <projectname>] ..."
-    echo "       kw --push -p|--project <projectname> [-t|--tables <tablesdir>] ..."
-    echo ""
-    echo "-h or --help for this help message."
+    echo "       kw --push -p|--project <projectname> [-t|--tempfiles <tempdir>]"
+    echo "          [-s|--sync-with <projectname>] [-i|--incremental] ..."
+    echo "       kw -h|--help"
 }
 
 CMDS=
@@ -32,8 +33,8 @@ FORCE_SET=false
 PUSH_SET=false
 
 # Paths to the SDAB recommended checker configuration and knowledge base
-PCONF="/vobs/Simulation/DeveloperSupport/config/analysis_profile.pconf"
-KB="/vobs/Simulation/DeveloperSupport/config/lasrs.kb"
+PCONF="$BASEPATH/Simulation/DeveloperSupport/config/analysis_profile.pconf"
+KB="$BASEPATH/Simulation/DeveloperSupport/config/lasrs.kb"
 
 while [ -n "$1" ]
 do
@@ -53,11 +54,11 @@ do
             INCREMENTAL_SET=true
             ;;
 
-	-p | --project)
-	    PROJECT="$2"
-	    PROJECT_SET=true
-	    shift
-	    ;;
+        -p | --project)
+            PROJECT="$2"
+            PROJECT_SET=true
+            shift
+            ;;
 
         --push)
             PUSH_SET=true
@@ -69,17 +70,17 @@ do
             shift
             ;;
 
-	-t | --tempfiles)
-	    TEMPFILES="$2"
-	    TEMPFILES_SET=true
-	    shift
-	    ;;
+        -t | --tempfiles)
+            TEMPFILES="$2"
+            TEMPFILES_SET=true
+            shift
+            ;;
 
-	*)
-	    BUILD="$*"
-	    BUILD_SET=true
-	    break
-	    ;;
+        *)
+            BUILD="$*"
+            BUILD_SET=true
+            break
+            ;;
     esac
 
     # We're done with the current argument, move to the next.
@@ -124,7 +125,9 @@ if [ "$PROJECT_SET" = "true" ] && [ "$PUSH_SET" = "true" ]; then
     CMDS+="kwinject $UPDATE -o $KWINJECT_OUT $BUILD;"
 
     # Create the kwbuildproject command
-    CMDS+="kwbuildproject $FORCE -j 4 $INCREMENTAL --url http://jedi:$PORT/$PROJECT --tables-directory $TEMPFILES/tables $KWINJECT_OUT;"
+    CMDS+="kwbuildproject $FORCE -j 4 $INCREMENTAL --url "
+    CMDS+="http://jedi:$PORT/$PROJECT --tables-directory $TEMPFILES/tables "
+    CMDS+="$KWINJECT_OUT;"
 
     # Create the kwadmin command to load results to the project website
     CMDS+="kwadmin --url http://jedi:$PORT/ load $PROJECT $TEMPFILES/tables;"
