@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# What view are we in?
-CVIEW=$(cleartool lsview -cview | cut -d " " -f 2)
-
-CMDS="cd $(pwd);kwgcheck"
-
-# Run Klocwork locally
-cleartool setview -exec "$CMDS" "$CVIEW"
