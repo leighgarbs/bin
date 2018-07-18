@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Grab the basepath
+BASEPATH_IN=$@
+
+if ! [ -e Makefile.options ]; then
+
+    # Initialize a Makefile.options
+    build-default
+fi
+
+# Make the change to a temporary file
+cat Makefile.options | setmkopts --basepath $BASEPATH_IN > Makefile.options.$$
+
+# Overwrite the Makefile.options proper with the new one
+mv Makefile.options.$$ Makefile.options

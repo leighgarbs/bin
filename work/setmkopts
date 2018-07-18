@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Initialize variables
-
 MODEL_LIST=
 MODEL_LIST_SET=false
 
@@ -13,6 +11,9 @@ BUILD_OPTION_SET=false
 
 LIBRARY_DEBUG=
 LIBRARY_DEBUG_SET=false
+
+BASEPATH=
+BASEPATH_SET=false
 
 GUI_OPTION=
 GUI_OPTION_SET=false
@@ -38,86 +39,82 @@ DDS_IMPLEMENTATION_SET=false
 while [ -n "$1" ]
 do
     case "$1" in
-	--modellist=*)
-	    MODEL_LIST=${1#"--modellist="}
-	    MODEL_LIST=${MODEL_LIST//,/ }
-	    MODEL_LIST_SET=true
-	    ;;
+        --modellist=*)
+            MODEL_LIST=${1#"--modellist="}
+            MODEL_LIST=${MODEL_LIST//,/ }
+            MODEL_LIST_SET=true
+            ;;
 
-	--pluginslist=*)
-	    PLUGINS_LIST=${1#"--pluginslist="}
-	    PLUGINS_LIST=${PLUGINS_LIST//,/ }
-	    PLUGINS_LIST_SET=true
-	    ;;
+        --pluginslist=*)
+            PLUGINS_LIST=${1#"--pluginslist="}
+            PLUGINS_LIST=${PLUGINS_LIST//,/ }
+            PLUGINS_LIST_SET=true
+            ;;
 
-	--buildoption)
-	    BUILD_OPTION=$2
-	    BUILD_OPTION_SET=true
-	    shift
-	    ;;
+        --buildoption)
+            BUILD_OPTION=$2
+            BUILD_OPTION_SET=true
+            shift
+            ;;
 
-	--librarydebug)
-	    LIBRARY_DEBUG=$2
-	    LIBRARY_DEBUG_SET=true
-	    shift
-	    ;;
+        --librarydebug)
+            LIBRARY_DEBUG=$2
+            LIBRARY_DEBUG_SET=true
+            shift
+            ;;
 
-	--guioption)
-	    GUI_OPTION=$2
-	    GUI_OPTION_SET=true
-	    shift
-	    ;;
+        --basepath)
+            BASEPATH=$2
+            BASEPATH_SET=true
+            shift
+            ;;
 
-	--osgoption)
-	    OSG_OPTION=$2
-	    OSG_OPTION_SET=true
-	    shift
-	    ;;
+        --guioption)
+            GUI_OPTION=$2
+            GUI_OPTION_SET=true
+            shift
+            ;;
 
-	--graphicsframeworkoption)
-	    GRAPHICS_FRAMEWORK_OPTION=$2
-	    GRAPHICS_FRAMEWORK_OPTION_SET=true
-	    shift
-	    ;;
+        --osgoption)
+            OSG_OPTION=$2
+            OSG_OPTION_SET=true
+            shift
+            ;;
 
-	--hardwareoption)
-	    HARDWARE_OPTION=$2
-	    HARDWARE_OPTION_SET=true
-	    shift
-	    ;;
+        --graphicsframeworkoption)
+            GRAPHICS_FRAMEWORK_OPTION=$2
+            GRAPHICS_FRAMEWORK_OPTION_SET=true
+            shift
+            ;;
 
-	--aircraftmotioncueing)
-	    AIRCRAFT_MOTION_CUEING=$2
-	    AIRCRAFT_MOTION_CUEING_SET=true
-	    shift
-	    ;;
+        --hardwareoption)
+            HARDWARE_OPTION=$2
+            HARDWARE_OPTION_SET=true
+            shift
+            ;;
 
-	--hl20motioncueing)
-	    HL20_MOTION_CUEING=$2
-	    HL20_MOTION_CUEING_SET=true
-	    shift
-	    ;;
+        --aircraftmotioncueing)
+            AIRCRAFT_MOTION_CUEING=$2
+            AIRCRAFT_MOTION_CUEING_SET=true
+            shift
+            ;;
 
-	--ddsimplementation)
-	    DDS_IMPLEMENTATION=$2
-	    DDS_IMPLEMENTATION_SET=true
-	    shift
-	    ;;
+        --hl20motioncueing)
+            HL20_MOTION_CUEING=$2
+            HL20_MOTION_CUEING_SET=true
+            shift
+            ;;
+
+        --ddsimplementation)
+            DDS_IMPLEMENTATION=$2
+            DDS_IMPLEMENTATION_SET=true
+            shift
+            ;;
     esac
 
     # We're done with the current argument, move to the next.
     shift
 done
-
-#echo $MODEL_LIST
-#echo $PLUGINS_LIST
-#echo $BUILD_OPTION
-#echo $LIBRARY_DEBUG
-#echo $GUI_OPTION
-#echo $GRAPHICS_FRAMEWORK_OPTION
-#echo $HARDWARE_OPTION
-#echo $AIRCRAFT_MOTION_CUEING
-#echo $HL20_MOTION_CUEING
 
 # Replace all the default settings with the settings specified in this script or on
 # the command line
@@ -125,48 +122,52 @@ done
 CMD=
 
 if [ "$MODEL_LIST_SET" = true ]; then
-    CMD=$CMD"sed \"s/MODEL_LIST=.*/MODEL_LIST=$MODEL_LIST/\" | "
+    CMD=$CMD"sed \"s;MODEL_LIST=.*;MODEL_LIST=$MODEL_LIST;\" | "
 fi
 
 if [ "$PLUGINS_LIST_SET" = true ]; then
-    CMD=$CMD"sed \"s/PLUGINS_LIST=.*/PLUGINS_LIST=$PLUGINS_LIST/\" | "
+    CMD=$CMD"sed \"s;PLUGINS_LIST=.*;PLUGINS_LIST=$PLUGINS_LIST;\" | "
 fi
 
 if [ "$BUILD_OPTION_SET" = true ]; then
-    CMD=$CMD"sed \"s/BUILD_OPTION=.*/BUILD_OPTION=$BUILD_OPTION/\" | "
+    CMD=$CMD"sed \"s;BUILD_OPTION=.*;BUILD_OPTION=$BUILD_OPTION;\" | "
 fi
 
 if [ "$LIBRARY_DEBUG_SET" = true ]; then
-    CMD=$CMD"sed \"s/LIBRARY_DEBUG=.*/LIBRARY_DEBUG=$LIBRARY_DEBUG/\" | "
+    CMD=$CMD"sed \"s;LIBRARY_DEBUG=.*;LIBRARY_DEBUG=$LIBRARY_DEBUG;\" | "
+fi
+
+if [ "$BASEPATH_SET" = true ]; then
+    CMD=$CMD"sed \"s;.*BASEPATH :=.*;BASEPATH := $BASEPATH;\" | "
 fi
 
 if [ "$GUI_OPTION_SET" = true ]; then
-    CMD=$CMD"sed \"s/GUI_OPTION=.*/GUI_OPTION=$GUI_OPTION/\" | "
+    CMD=$CMD"sed \"s;GUI_OPTION=.*;GUI_OPTION=$GUI_OPTION;\" | "
 fi
 
 if [ "$OSG_OPTION_SET" = true ]; then
-    CMD=$CMD"sed \"s/OSG_OPTION=.*/OSG_OPTION=$OSG_OPTION/\" | "
+    CMD=$CMD"sed \"s;OSG_OPTION=.*;OSG_OPTION=$OSG_OPTION;\" | "
 fi
 
 if [ "$GRAPHICS_FRAMEWORK_OPTION_SET" = true ]; then
-    CMD=$CMD"sed \"s/GRAPHICS_FRAMEWORK_OPTION=.*/GRAPHICS_FRAMEWORK_OPTION=$GRAPHICS_FRAMEWORK_OPTION/\" | "
+    CMD=$CMD"sed \"s;GRAPHICS_FRAMEWORK_OPTION=.*;GRAPHICS_FRAMEWORK_OPTION=$GRAPHICS_FRAMEWORK_OPTION;\" | "
 fi
 
 if [ "$HARDWARE_OPTION_SET" = true ]; then
-    CMD=$CMD"sed \"s/HARDWARE_OPTION=.*/HARDWARE_OPTION=$HARDWARE_OPTION/\" | "
+    CMD=$CMD"sed \"s;HARDWARE_OPTION=.*;HARDWARE_OPTION=$HARDWARE_OPTION;\" | "
 fi
 
 if [ "$AIRCRAFT_MOTION_CUEING_SET" = true ]; then
-    CMD=$CMD"sed \"s/AIRCRAFT_MOTION_CUEING =.*/AIRCRAFT_MOTION_CUEING=$AIRCRAFT_MOTION_CUEING/\" | "
+    CMD=$CMD"sed \"s;AIRCRAFT_MOTION_CUEING =.*;AIRCRAFT_MOTION_CUEING=$AIRCRAFT_MOTION_CUEING;\" | "
 fi
 
 if [ "$HL20_MOTION_CUEING_SET" = true ]; then
-    CMD=$CMD"sed \"s/HL20_MOTION_CUEING =.*/HL20_MOTION_CUEING=$HL20_MOTION_CUEING/\" | "
+    CMD=$CMD"sed \"s;HL20_MOTION_CUEING =.*;HL20_MOTION_CUEING=$HL20_MOTION_CUEING;\" | "
 fi
 
 if [ "$DDS_IMPLEMENTATION_SET" = true ]; then
-    CMD=$CMD"sed \"s/DDS_IMPLEMENTATION=.*/DDS_IMPLEMENTATION=$DDS_IMPLEMENTATION/\" | "
-    CMD=$CMD"sed \"s/#*DDS_IMPLEMENTATION/DDS_IMPLEMENTATION/\" | "
+    CMD=$CMD"sed \"s;DDS_IMPLEMENTATION=.*;DDS_IMPLEMENTATION=$DDS_IMPLEMENTATION;\" | "
+    CMD=$CMD"sed \"s;#*DDS_IMPLEMENTATION;DDS_IMPLEMENTATION;\" | "
 fi
 
 # Append a cat to the command.  We need this in case there isn't any input, or to
