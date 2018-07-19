@@ -5,7 +5,7 @@ rm -f Makefile.options
 
 # Grab Makefile.options.skel, set all the options how I like them by default,
 # and write a Makefile.options
-cat /vobs/aircraft++/Makefile.options.skel | setmkopts \
+cat $BASEPATH/aircraft++/Makefile.options.skel | setmkopts \
 --modellist="" \
 --pluginslist="" \
 --buildoption BATCH_DEBUG \

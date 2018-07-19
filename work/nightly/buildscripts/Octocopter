@@ -18,12 +18,14 @@ do
     shift
 done
 
+view-default
+
 # Set build options
 cd /vobs/aircraft++
 build-default
-build-models genericuav octocopter
-build-plugins matlab2010a
+build-modellist genericuav octocopter
+build-pluginslist matlab2010a
 build-buildoption "$BUILD_OPTION"
 
 # Actually run the build
-clearmake -B ~/.bldhost.jedi.ndc.nasa.gov -V sim
+clearmake -B ~/.bldhost.jedi.ndc.nasa.gov -V sim > build.out 2> build.error

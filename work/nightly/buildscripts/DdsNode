@@ -18,6 +18,8 @@ do
     shift
 done
 
+view-default
+
 # Set toolbox build options
 cd /vobs/toolbox++
 build-default
@@ -31,4 +33,4 @@ build-buildoption "$BUILD_OPTION"
 
 # Actually run the build
 cd /vobs/UAV/DdsNode
-make -B ddsnode
+make -B ddsnode > build.out 2> build.error

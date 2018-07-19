@@ -18,6 +18,8 @@ do
     shift
 done
 
+view-default
+
 # Set toolbox build options
 cd /vobs/toolbox++
 build-default
@@ -31,4 +33,4 @@ build-ddsimplementation OPEN_SPLICE
 
 # Actually run the build
 cd /vobs/UAV/LvcInterface
-make -B production
+make -B production > build.out 2> build.error

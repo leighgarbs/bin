@@ -1,3 +1,34 @@
-#!/bin/tcsh
+#!/bin/bash
 
-cleartool setview -exec "runkwbuild $1" "$2" > /dev/null
+VIEW=
+VIEW_SET=false
+
+NIGHTLY=
+NIGHTLY_SET=false
+
+while [ -n "$1" ]
+do
+    case "$1" in
+
+        -v | --view)
+            VIEW_SET=true
+            VIEW="$2"
+            shift
+            ;;
+
+        *)
+            NIGHTLY="$*"
+            NIGHTLY_SET=true
+            break
+            ;;
+    esac
+
+    # We're done with the current argument, move to the next.
+    shift
+done
+
+if [ "$VIEW_SET" == "true" ]; then
+    cleartool setview -exec "runkwbuild $NIGHTLY" "$VIEW" > /dev/null 2> /dev/null
+else
+    runkwbuild "$NIGHTLY" > /dev/null 2> /dev/null
+fi

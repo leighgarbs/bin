@@ -1,13 +1,11 @@
 #!/bin/bash
 
 print_usage() {
-    echo "Usage: runbuild [ -e | --email <address> ] [ -c | --ccbuild ] <source script>"
+    echo "Usage: runbuild [-h|--help] [-e|--email <address>] <source script>"
 }
 
 EMAIL=
 EMAIL_SET=false
-
-CCBUILD_SET=false
 
 BUILDSRC=
 BUILDSRC_SET=false
@@ -15,10 +13,6 @@ BUILDSRC_SET=false
 while [ -n "$1" ]
 do
     case "$1" in
-
-        -c | --ccbuild)
-            CCBUILD_SET=true
-            ;;
 
         -e | --email)
             EMAIL_SET=true
@@ -47,19 +41,19 @@ if [ "$BUILDSRC_SET" == "false" ]; then
     exit 1
 fi
 
-if [ "$CCBUILD_SET" == "true" ]; then
-    # Reset this view back to default; gets rid of all view-private files, among
-    # other things
-    view-default
+if [ -f "$BUILDSRC" ]; then
+    # Source the given build script and save the return code
+    . "$BUILDSRC" > /dev/null 2> /dev/null
+    RETURN="$?"
+else
+    # Evaluate BUILDSRC as it must be a command
+    eval "$BUILDSRC" > /dev/null 2> /dev/null
+    RETURN="$?"
 fi
 
-# Source the given build script and save the return code
-. "$BUILDSRC" > /tmp/build.out.$$ 2> /tmp/build.error.$$
-RETURN="$?"
-
 # Move the build output files into wherever we are now
-mv /tmp/build.out.$$ build.out
-mv /tmp/build.error.$$ build.error
+#mv /tmp/build.out.$$ build.out
+#mv /tmp/build.error.$$ build.error
 
 # If the build failed and an email address was provided, email a failure report
 if [ "$RETURN" != 0 ] && [ "$EMAIL_SET" == "true" ]; then

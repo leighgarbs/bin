@@ -18,6 +18,8 @@ do
     shift
 done
 
+view-default
+
 # Set build options
 cd /vobs/lasrs++/Dds/redist
 build-default
@@ -25,4 +27,4 @@ build-ddsimplementation OPEN_SPLICE
 build-buildoption "$BUILD_OPTION"
 
 # Actually run the build
-make -B
+make -B > build.out 2> build.error
