@@ -28,4 +28,4 @@ build-pluginslist matlab2010a
 build-buildoption "$BUILD_OPTION"
 
 # Actually run the build
-clearmake -B ~/.bldhost.jedi.ndc.nasa.gov -V sim > build.out 2> build.error
+clearmake -B ~/.bldhost.jedi.ndc.nasa.gov -V sim

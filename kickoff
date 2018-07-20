@@ -45,8 +45,8 @@ do
     shift
 done
 
-if [ -z "$KICKOFF_DEST" ]; then
-    echo Please set KICKOFF_DEST to a valid email address.
+if [ -z "$EMAIL" ]; then
+    echo Please set EMAIL to a valid email address.
     exit 1
 fi
 
@@ -76,7 +76,7 @@ MAIL_SUBJECT="$SHORTNAME done on $FROM"
 # Construct the header lines
 HEADER=
 HEADER+="From: $FROM\n"
-HEADER+="To: $KICKOFF_DEST\n"
+HEADER+="To: $EMAIL\n"
 HEADER+="Subject: $MAIL_SUBJECT\n"
 
 # If the user has SMTP_RELAY set then pass that to sendemail
@@ -97,5 +97,5 @@ else
         MAIL_BODY="$JOB\n$TIME"; \
         echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME; \
         echo -e "$HEADER$MAIL_BODY" | \
-        sendemail --from $FROM --to $KICKOFF_DEST $SMTP_RELAY_CMD) &
+        sendemail --from $FROM --to $EMAIL $SMTP_RELAY_CMD) &
 fi

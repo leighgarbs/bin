@@ -27,4 +27,4 @@ build-ddsimplementation OPEN_SPLICE
 build-buildoption "$BUILD_OPTION"
 
 # Actually run the build
-make -B > build.out 2> build.error
+make -B
