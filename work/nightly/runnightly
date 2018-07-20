@@ -3,6 +3,8 @@
 VIEW=
 VIEW_SET=false
 
+KW_SET=false
+
 NIGHTLY=
 NIGHTLY_SET=false
 
@@ -16,6 +18,10 @@ do
             shift
             ;;
 
+        -k)
+            KW_SET=true
+            ;;
+
         *)
             NIGHTLY="$*"
             NIGHTLY_SET=true
@@ -27,8 +33,13 @@ do
     shift
 done
 
+BUILD_CMD=runbuild
+if [ "$KW_SET" == true ]; then
+    BUILD_CMD=runkwbuild
+fi
+
 if [ "$VIEW_SET" == "true" ]; then
-    cleartool setview -exec "runkwbuild $NIGHTLY" "$VIEW" > /dev/null 2> /dev/null
+    cleartool setview -exec "$BUILD_CMD $NIGHTLY" "$VIEW" > /dev/null 2> /dev/null
 else
-    runkwbuild "$NIGHTLY" > /dev/null 2> /dev/null
+    "$BUILD_CMD" "$NIGHTLY" > /dev/null 2> /dev/null
 fi
