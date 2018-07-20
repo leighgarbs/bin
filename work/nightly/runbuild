@@ -48,8 +48,10 @@ fi
 
 BASENAME=`echo $BUILDSRC | sed "s:.*/::"`
 
-BUILD_OUT=~/.build.out.$BASENAME
-BUILD_ERR=~/.build.err.$BASENAME
+mkdir ~/.build
+
+BUILD_OUT=~/.build/$BASENAME.out
+BUILD_ERR=~/.build/$BASENAME.err
 
 if [ -f "$BUILDSRC" ]; then
     # Run the given build script and save the return code

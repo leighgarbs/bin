@@ -1,0 +1,10 @@
+#!/bin/bash
+
+view-default
+
+# Set build options
+cd /vobs/aircraft++
+ln -sf UAV/config/DemoMar2018/sivl/Makefile.options
+
+# Actually run the build
+clearmake -B ~/.bldhost.jedi.ndc.nasa.gov sim
