@@ -1,5 +1,5 @@
 SHELL=/bin/tcsh
-PATH=/bin:/usr/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/cmake/cmake-3.11.1-Linux-x86_64/bin/cmake:/net/jedi.ndc.nasa.gov/home/lgarbs/bin/work:/home/lgarbs/bin/work/nightly:/home/lgarbs/bin/work/nightly/buildscripts:/opt/ibm/RationalSDLC/clearcase/bin:/opt/Klocwork/Server/bin:/opt/Klocwork/User/bin
+PATH=/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/cmake/cmake-3.11.1-Linux-x86_64/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin/work:/home/lgarbs/bin/work/nightly:/home/lgarbs/bin/work/nightly/buildscripts:/opt/ibm/RationalSDLC/clearcase/bin:/opt/Klocwork/Server/bin:/opt/Klocwork/User/bin:/bin:/usr/bin
 
 # soccertoday-5pm-powerplant
 # soccertoday-5pm-powerplant-noroster
@@ -20,16 +20,19 @@ PATH=/bin:/usr/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov
 #0 9 * * 5 send-soccer-email soccertoday-6pm-nasagym
 
 
-0 20 * * 1-5 runnightly -v lsg_nightly1  Bat4
-0 20 * * 1-5 runnightly -v lsg_nightly2  DDS_Redistributable_OpenSplice
-0 20 * * 1-5 runnightly -v lsg_nightly3  DDS_Redistributable_Connext
-0 20 * * 1-5 runnightly -v lsg_nightly4  DdsNode
-0 20 * * 1-5 runnightly -v lsg_nightly5  GenericUav
-0 20 * * 1-5 runnightly -v lsg_nightly6  HumanObserver
-0 20 * * 1-5 runnightly -v lsg_nightly7  LvcInterface
-0 20 * * 1-5 runnightly -v lsg_nightly8  Octocopter
-0 20 * * 1-5 runnightly -v lsg_nightly9  brsddsfwd-inside
-0 20 * * 1-5 runnightly -v lsg_nightly10 brsddsfwd-outside
+0 20 * * 1-5 runnightly -k -v lsg_nightly1  Bat4
+0 20 * * 1-5 runnightly -k -v lsg_nightly2  DDS_Redistributable_OpenSplice
+0 20 * * 1-5 runnightly -k -v lsg_nightly3  DDS_Redistributable_Connext
+0 20 * * 1-5 runnightly -k -v lsg_nightly4  DdsNode
+0 20 * * 1-5 runnightly -k -v lsg_nightly5  GenericUav
+0 20 * * 1-5 runnightly -k -v lsg_nightly6  HumanObserver
+0 20 * * 1-5 runnightly -k -v lsg_nightly7  LvcInterface
+0 20 * * 1-5 runnightly -k -v lsg_nightly8  Octocopter
+0 20 * * 1-5 runnightly -k -v lsg_nightly9  brsddsfwd-inside
+0 20 * * 1-5 runnightly -k -v lsg_nightly10 brsddsfwd-outside
+
+0 20 * * 1-5 runnightly -v lsg_nightly11 DemoMar2018_SIVL
+0 20 * * 1-5 runnightly -v lsg_nightly12 DemoMar2018_TES
 
 # Do an hourly sync of Klocwork issues
 0 * * * 1-5 kwsync-all
