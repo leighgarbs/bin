@@ -10,6 +10,14 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+EMAIL=
+EMAIL_SET=false
+
+if [ -n "$EMAIL" ]; then
+    EMAIL="$EMAIL"
+    EMAIL_SET=true
+fi
+
 JOB=
 JOB_SET=false
 
@@ -23,6 +31,12 @@ do
 
         --clear)
             CLEAR_SET=true
+            ;;
+
+        -e)
+            EMAIL="$2"
+            EMAIL_SET=true
+            shift
             ;;
 
         --noemail)
@@ -44,11 +58,6 @@ do
     # We're done with the current argument, move to the next.
     shift
 done
-
-if [ -z "$EMAIL" ]; then
-    echo Please set EMAIL to a valid email address.
-    exit 1
-fi
 
 if [ "$CLEAR_SET" = "true" ]; then
     rm -f ~/.kickoff*
@@ -88,7 +97,7 @@ fi
 # Run the job and drop a .kickoff file in the user's home dir
 # Send them an email if they haven't explicitly turned that off
 # Do this all in the background
-if [ "$NOEMAIL_SET" = "true" ]; then
+if [ "$NOEMAIL_SET" = "true" ] || [ "$EMAIL_SET" == "false" ]; then
     (TIME=$(time(nohup $JOB > /dev/null 2> /dev/null < /dev/null) 2>&1); \
         MAIL_BODY="$JOB\n$TIME"; \
         echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME) &
