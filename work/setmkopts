@@ -138,7 +138,7 @@ if [ "$LIBRARY_DEBUG_SET" = true ]; then
 fi
 
 if [ "$BASEPATH_SET" = true ]; then
-    CMD=$CMD"sed \"s;.*BASEPATH :=.*;BASEPATH := $BASEPATH;\" | "
+    CMD=$CMD"sed \"s;.*BASEPATH=.*;BASEPATH=$BASEPATH;\" | "
 fi
 
 if [ "$GUI_OPTION_SET" = true ]; then
