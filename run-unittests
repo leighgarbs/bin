@@ -1,0 +1,21 @@
+#!/bin/bash
+
+HAS_ONE_FAILED=false
+
+for FILE in $@; do
+
+    echo -n "Running $FILE ... "
+    ./$FILE > $FILE.out 2> $FILE.err
+
+    # Did it work?
+    if [ $? == 0 ]; then
+        echo pass
+    else
+        echo FAILED!
+        HAS_ONE_FAILED=true
+    fi
+done
+
+if [ $HAS_ONE_FAILED == true ]; then
+    exit 1
+fi
