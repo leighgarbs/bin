@@ -4,7 +4,7 @@ view-default
 
 # Set build options
 cd /vobs/aircraft++
-ln -sf UAV/config/DemoMar2018/sivl/Makefile.options
+ln -sf UAV/config/LdmDemo/tes/Makefile.options
 
 # Actually run the build
 clearmake -B ~/.bldhost.jedi.ndc.nasa.gov sim
