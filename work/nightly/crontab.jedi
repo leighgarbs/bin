@@ -31,8 +31,8 @@ PATH=/net/jedi.ndc.nasa.gov/home/lgarbs/bin:/net/jedi.ndc.nasa.gov/home/lgarbs/c
 0 20 * * 1-5 runnightly -k -v lsg_nightly9  brsddsfwd-inside
 0 20 * * 1-5 runnightly -k -v lsg_nightly10 brsddsfwd-outside
 
-0 20 * * 1-5 runnightly -v lsg_nightly11 DemoMar2018_SIVL
-0 20 * * 1-5 runnightly -v lsg_nightly12 DemoMar2018_TES
+0 20 * * 1-5 runnightly -v lsg_nightly11 LdmDemo_SIVL
+0 20 * * 1-5 runnightly -v lsg_nightly12 LdmDemo_TES
 
 # Do an hourly sync of Klocwork issues
 0 * * * 1-5 kwsync-all
