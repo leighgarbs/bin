@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Default arguments
-ARGS="--enable=all --std=posix --inconclusive --inline-suppr"
+ARGS="--enable=all --std=posix --inconclusive"
 
 # Additionally define these arguments if run in Jenkins configuration (Jenkins
 # cppcheck plugin only understands XML-formatted cppcheck output)
