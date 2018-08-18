@@ -1,21 +1,35 @@
 #!/bin/bash
 
-HAS_ONE_FAILED=false
+NUM_FAILED=0
 
-for FILE in $@; do
+# We'll have to come back here after each test
+START_DIR=$(pwd)
 
-    echo -n "Running $FILE ... "
-    ./$FILE > $FILE.out 2> $FILE.err
+for PATHNAME in $@; do
+
+    echo -n "Running $PATHNAME ... "
+
+    BNAME=$(basename "$PATHNAME")
+
+    cd $(dirname "$PATHNAME")
+    ./"$BNAME" > "$BNAME".out 2> "$BNAME".err
 
     # Did it work?
     if [ $? == 0 ]; then
         echo pass
     else
         echo FAILED!
-        HAS_ONE_FAILED=true
+        NUM_FAILED=$(($NUM_FAILED + 1))
     fi
+
+    # Change eback to where we originally were
+    cd "$START_DIR"
 done
 
-if [ $HAS_ONE_FAILED == true ]; then
-    exit 1
+if [ "$NUM_FAILED" == 0 ]; then
+    echo All tests pass
+else
+    echo "$NUM_FAILED tests failed"
 fi
+
+exit "$NUM_FAILED"
