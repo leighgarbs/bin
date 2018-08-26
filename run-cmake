@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function displayhelp {
-    echo "$0 [ --debug | --release ] [ --static | --shared ] [ --help ]"
+    echo "$0 [ --debug | --release ] [ --staticlibs | --sharedlibs ] [ --help ]"
 }
 
 DEBUG_SET=false
