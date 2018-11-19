@@ -8,7 +8,7 @@ ARGS="--enable=all --std=posix --inconclusive --force"
 JENKINS_ARGS="--xml --xml-version=2 --inline-suppr "
 JENKINS_ARGS+=`cat .cppcheck-ignore | sed "s/.*/-i &/" | tr "\n" " "`
 
-CPPCHECK_XML=cppcheck-result.xml
+CPPCHECK_XML=cppcheck.xml
 
 JENKINS_MODE=false
 
