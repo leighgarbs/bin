@@ -1,4 +1,0 @@
-#!/bin/bash
-
-cs-default
-rm-all-viewprivate

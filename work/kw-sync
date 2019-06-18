@@ -1,3 +1,0 @@
-#!/bin/bash
-
-kwxsync --port 8090 "$@"

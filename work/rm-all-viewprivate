@@ -1,3 +1,0 @@
-#!/bin/bash
-
-cleartool lsprivate -tag $(cleartool pwv -s) | xargs rm -rf
