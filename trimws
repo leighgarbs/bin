@@ -17,8 +17,8 @@ do
 done
 
 # Remove whitespace at the end of lines
-if [ "$INPUTFILE_SET" == true ]; then
-    sed --in-place 's/[[:space:]]\+$//' "$INPUTFILE"
+if [ "${INPUTFILE_SET}" == true ]; then
+    sed --in-place 's/[[:space:]]\+$//' "${INPUTFILE}"
 else
     cat - | sed 's/[[:space:]]\+$//'
 fi

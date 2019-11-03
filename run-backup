@@ -1,7 +1,7 @@
 #!/bin/bash
 
-function displayhelp {
-    echo "$0 [--sync] {-t|--type backuptype} {-c configfile}"
+function display_usage {
+    echo "Usage: $0 [-s | --sync] {-t | --type TYPE} {-c CONFIGFILE}"
 }
 
 SYNC=false
@@ -15,51 +15,55 @@ CONFIG_FILE_SET=false
 while [ -n "$1" ]
 do
     case "$1" in
-	--sync)
-	    SYNC=true
-	    ;;
+        -c)
+            CONFIG_FILE="$2"
+            CONFIG_FILE_SET=true
+            shift
+            ;;
 
-	-t | --type)
-	    TYPE="$2"
-	    TYPE_SET=true
-	    shift
-	    ;;
+        -h | --help)
+            display_usage
+            exit 0
+            ;;
 
-	-c)
-	    CONFIG_FILE="$2"
-	    CONFIG_FILE_SET=true
-	    shift
-	    ;;
+        -s | --sync)
+            SYNC=true
+            ;;
 
-	-h | --help)
-	    displayhelp
-	    exit
-	    ;;
+        -t | --type)
+            TYPE="$2"
+            TYPE_SET=true
+            shift
+            ;;
 
+        *)
+            display_usage
+            exit 1
+            ;;
     esac
 
     # We're done with the current argument, move to the next.
     shift
 done
 
-if [ $TYPE_SET == false ] || [ $CONFIG_FILE_SET == false ]; then
-    displayhelp
-    exit
+if [ "${TYPE_SET}" == false ] || [ "${CONFIG_FILE_SET}" == false ]; then
+    display_usage
+    exit 1
 fi
 
 SYNC_RESULT=0
 
 # sync if the user wants to
-if [ $SYNC == true ]; then
-    rsnapshot -c $CONFIG_FILE sync
+if [ "${SYNC}" == true ]; then
+    rsnapshot -c "${CONFIG_FILE}" sync
     SYNC_RESULT=$?
 fi
 
 # exit if the sync didn't work
-if [ $SYNC_RESULT != 0 ]; then
+if [ "${SYNC_RESULT}" != 0 ]; then
     exit 1
 fi
 
-rsnapshot -c $CONFIG_FILE $TYPE
+rsnapshot -c "${CONFIG_FILE}" "${TYPE}"
 
 exit $?
