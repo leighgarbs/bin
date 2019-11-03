@@ -84,9 +84,6 @@ if ! test -d "${REPORT_DIR}"; then
     mkdir "${REPORT_DIR}"
 fi
 
-# Print the job name so the user can see it
-echo "${CMD_NAME}"
-
 # Construct the subject line
 MAIL_SUBJECT="${CMD_NAME} done on ${FROM}"
 
@@ -110,8 +107,16 @@ fi
 
 mkdir -p "${OUTPUT_DIR}"
 
-WRAPPED_CMD="nohup ${CMD} > ${OUTPUT_DIR}/out 2> ${OUTPUT_DIR}/err "
-WRAPPED_CMD+="< /dev/null"
+# This redirects output from the command to where we want it
+WRAPPED_CMD="${CMD} > ${OUTPUT_DIR}/out 2> ${OUTPUT_DIR}/err"
+
+# This adds timing and redirects the time output where we want it.  A subshell
+# has to be used here instead of bracket grouping for some reason.
+WRAPPED_CMD="time (${WRAPPED_CMD}) 2> ${OUTPUT_DIR}/time"
+
+# This makes the whole thing uninterruptible.  Do this last.
+WRAPPED_CMD="nohup bash -c '${WRAPPED_CMD}' > /dev/null 2> /dev/null "
+WRAPPED_CMD+="< /dev/null &"
 
 # Run the job and drop a .kickoff file in the user's home dir
 # Send them an email if requested
@@ -126,9 +131,8 @@ if [ "${EMAIL_SET}" == true ]; then
 
 else
 
-    CMD_TIME=$(time (eval "${WRAPPED_CMD}") 2> "${OUTPUT_DIR}/time")
-
-    echo "${CMD_TIME}"
+    eval "${WRAPPED_CMD}"
+    #time (eval "${WRAPPED_CMD}") 2> "${OUTPUT_DIR}/time"
 
     #TIME=$(time ${WRAPPED_CMD})
 
