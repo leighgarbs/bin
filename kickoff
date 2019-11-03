@@ -15,9 +15,6 @@ CLEAR_SET=false
 CMD=
 CMD_SET=false
 
-EMAIL=
-EMAIL_SET=false
-
 VERBOSITY=0
 
 while [ -n "$1" ]
@@ -26,12 +23,6 @@ do
 
         -c | --clear)
             CLEAR_SET=true
-            ;;
-
-        -e | --email)
-            EMAIL="$2"
-            EMAIL_SET=true
-            shift
             ;;
 
         -h | --help)
@@ -68,8 +59,6 @@ if [ "${CMD_SET}" == false ]; then
     exit 1
 fi
 
-FROM=$(whoami)@$(hostname)
-
 # Come up with a short name to describe this job.  The "$$" at the end is
 # supposed to be there.
 CMD_NAME=$(echo "${CMD}" | cut -d " " -f 1)$$
@@ -82,21 +71,6 @@ if ! test -d "${REPORT_DIR}"; then
     fi
 
     mkdir "${REPORT_DIR}"
-fi
-
-# Construct the subject line
-MAIL_SUBJECT="${CMD_NAME} done on ${FROM}"
-
-# Construct the header lines
-HEADER=
-HEADER+="From: ${FROM}\n"
-HEADER+="To: ${EMAIL}\n"
-HEADER+="Subject: ${MAIL_SUBJECT}\n"
-
-# If the user has SMTP_RELAY set then pass that to sendemail
-SMTP_RELAY_CMD=
-if [ -n "${SMTP_RELAY}" ]; then
-    SMTP_RELAY_CMD="--smtp-relay ${SMTP_RELAY}"
 fi
 
 # Files containing output from the command will use this prefix
@@ -115,29 +89,9 @@ WRAPPED_CMD="${CMD} > ${OUTPUT_DIR}/out 2> ${OUTPUT_DIR}/err"
 WRAPPED_CMD="time (${WRAPPED_CMD}) 2> ${OUTPUT_DIR}/time"
 
 # This makes the whole thing uninterruptible.  Do this last.
+# Frustratingly, nohup can't be given a subshell, so invoke bash with it
+# instead.
 WRAPPED_CMD="nohup bash -c '${WRAPPED_CMD}' > /dev/null 2> /dev/null "
 WRAPPED_CMD+="< /dev/null &"
 
-# Run the job and drop a .kickoff file in the user's home dir
-# Send them an email if requested
-# Do this all in the background
-if [ "${EMAIL_SET}" == true ]; then
-
-    (TIME=$(time (nohup "${CMD}" > /dev/null 2> /dev/null < /dev/null) 2>&1); \
-        MAIL_BODY="${CMD}\n${TIME}"; \
-        echo -e "${MAIL_BODY}" > ~/.kickoff_"${CMD_NAME}"; \
-        echo -e "${HEADER}${MAIL_BODY}" | \
-        sendemail --from "${FROM}" --to "${EMAIL} ${SMTP_RELAY_CMD}") &
-
-else
-
-    eval "${WRAPPED_CMD}"
-    #time (eval "${WRAPPED_CMD}") 2> "${OUTPUT_DIR}/time"
-
-    #TIME=$(time ${WRAPPED_CMD})
-
-#            (TIME=$(time ("${WRAPPED_CMD}"); \
-#        MAIL_BODY="${CMD}\n${TIME}"; \
-#        echo -e "${MAIL_BODY}" > "${OUTPUT_DIR}") &
-
-fi
+eval "${WRAPPED_CMD}"
