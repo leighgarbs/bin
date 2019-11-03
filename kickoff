@@ -56,7 +56,7 @@ done
 
 if [ "${CLEAR_SET}" == true ]; then
 
-    rm "${REPORT_DIR}"/*
+    rm -rf "${REPORT_DIR}"/*
 
     if [ "${CMD_SET}" == false ]; then
         exit 0
@@ -103,10 +103,15 @@ if [ -n "${SMTP_RELAY}" ]; then
 fi
 
 # Files containing output from the command will use this prefix
-OUTPUT_PREFIX="${REPORT_DIR}/${CMD_NAME}"
+OUTPUT_DIR="${REPORT_DIR}/${CMD_NAME}"
+if [ "${VERBOSITY}" -gt 0 ]; then
+    echo "Reports will be written to ${OUTPUT_DIR}"
+fi
 
-NOHUP_CMD="nohup ${CMD} > ${OUTPUT_PREFIX}.out 2> ${OUTPUT_PREFIX}.err "
-NOHUP_CMD+="< /dev/null"
+mkdir -p "${OUTPUT_DIR}"
+
+WRAPPED_CMD="nohup ${CMD} > ${OUTPUT_DIR}/out 2> ${OUTPUT_DIR}/err "
+WRAPPED_CMD+="< /dev/null"
 
 # Run the job and drop a .kickoff file in the user's home dir
 # Send them an email if requested
@@ -121,12 +126,14 @@ if [ "${EMAIL_SET}" == true ]; then
 
 else
 
-    eval "${NOHUP_CMD}"
+    CMD_TIME=$(time (eval "${WRAPPED_CMD}") 2> "${OUTPUT_DIR}/time")
 
-    #TIME=$(time ${NOHUP_CMD})
+    echo "${CMD_TIME}"
 
-#            (TIME=$(time ("${NOHUP_CMD}"); \
+    #TIME=$(time ${WRAPPED_CMD})
+
+#            (TIME=$(time ("${WRAPPED_CMD}"); \
 #        MAIL_BODY="${CMD}\n${TIME}"; \
-#        echo -e "${MAIL_BODY}" > "${OUTPUT_PREFIX}") &
+#        echo -e "${MAIL_BODY}" > "${OUTPUT_DIR}") &
 
 fi
