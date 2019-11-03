@@ -59,10 +59,6 @@ if [ "${CMD_SET}" == false ]; then
     exit 1
 fi
 
-# Come up with a short name to describe this job.  The "$$" at the end is
-# supposed to be there.
-CMD_NAME=$(echo "${CMD}" | cut -d " " -f 1)$$
-
 # Make the report directory if it doesn't already exist
 if ! test -d "${REPORT_DIR}"; then
 
@@ -73,8 +69,24 @@ if ! test -d "${REPORT_DIR}"; then
     mkdir "${REPORT_DIR}"
 fi
 
-# Files containing output from the command will use this prefix
-OUTPUT_DIR="${REPORT_DIR}/${CMD_NAME}"
+# Come up with a short name to describe this job.  The "$$" at the end is
+# supposed to be there.
+
+# This grabs the first space-delimited token.  This may have unsafe characters
+# in it so we clean it below.
+CMD_IDENT=$(echo "${CMD}" | cut -d " " -f 1 | tr -C '[:alpha:]' " ")
+
+# Now pick off the first space-delimited token.  This isn't the best way to do
+# this since we won't want to loop here, but it's what seems to be working now.
+for WORD in ${CMD_IDENT}; do
+    CMD_IDENT="${WORD}"
+    break
+done
+
+# Files containing output from the command will use this prefix (the $$ appends
+# the PID)
+OUTPUT_DIR="${REPORT_DIR}/${CMD_IDENT}$$"
+
 if [ "${VERBOSITY}" -gt 0 ]; then
     echo "Reports will be written to ${OUTPUT_DIR}"
 fi
