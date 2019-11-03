@@ -1,56 +1,48 @@
 #!/bin/bash
 
 # Prints appropriate usage
-print_usage() {
-    echo "Usage: $(basename $0) [ -h | --help ] [ --clear ] <job>"
+display_usage() {
+    echo "Usage: $0 [-c | --clear] [-e | --email] [-h | --help] CMD"
 }
 
-if [ $# -eq 0 ]; then
-    print_usage
-    exit 1
-fi
+BASENAME=$(basename $0)
+
+CLEAR_SET=false
+
+CMD=
+CMD_SET=false
 
 EMAIL=
 EMAIL_SET=false
 
-if [ -n "$EMAIL" ]; then
-    EMAIL="$EMAIL"
-    EMAIL_SET=true
-fi
-
-JOB=
-JOB_SET=false
-
-CLEAR_SET=false
-
-NOEMAIL_SET=false
+VERBOSITY=0
 
 while [ -n "$1" ]
 do
     case "$1" in
 
-        --clear)
+        -c | --clear)
             CLEAR_SET=true
             ;;
 
-        -e)
+        -e | --email)
             EMAIL="$2"
             EMAIL_SET=true
             shift
             ;;
 
-        --noemail)
-            NOEMAIL_SET=true
-            ;;
-
         -h | --help)
-            print_usage
+            display_usage
             exit 0
             ;;
 
+        -v | --verbose)
+            VERBOSITY=$((VERBOSITY + 1))
+            ;;
+
         *)
-            JOB="$*"
-            JOB_SET=true
+            CMD="$*"
+            CMD_SET=true
             break
             ;;
     esac
@@ -59,52 +51,86 @@ do
     shift
 done
 
-if [ "$CLEAR_SET" = "true" ]; then
-    rm -f ~/.kickoff*
-    if [ "$JOB_SET" = "false" ]; then
+if [ "${CLEAR_SET}" == true ]; then
+
+    rm -f ~/."${BASENAME}"*
+
+    if [ "${CMD_SET}" == false ]; then
         exit 0
     fi
 fi
 
-if [ "$JOB_SET" = "false" ]; then
-    echo What should I kick off?
+if [ "${CMD_SET}" == false ]; then
+    display_usage
     exit 1
 fi
 
 FROM=$(whoami)@$(hostname)
 
-# Come up with a short name to describe this job
-SHORTNAME=$(echo "$JOB" | cut -d " " -f 1)$$
+# Come up with a short name to describe this job.  The "$$" at the end is
+# supposed to be there.
+CMD_NAME=$(echo "${CMD}" | cut -d " " -f 1)$$
 
-# Print the job name so the user can see it
-echo $SHORTNAME
+# Reports go here
+REPORT_DIR=~/.${BASENAME}
+
+# Make the report directory if it doesn't already exist
+if ! test -d "${REPORT_DIR}"; then
+
+    if [ "${VERBOSITY}" -gt 0 ]; then
+        echo "Creating report directory ${REPORT_DIR}"
+    fi
+
+    mkdir "${REPORT_DIR}"
+fi
+
+if [ "${VERBOSITY}" -gt 0 ]; then
+    # Print the job name so the user can see it
+    echo "${CMD_NAME}"
+fi
 
 # Construct the subject line
-MAIL_SUBJECT="$SHORTNAME done on $FROM"
+MAIL_SUBJECT="${CMD_NAME} done on ${FROM}"
 
 # Construct the header lines
 HEADER=
-HEADER+="From: $FROM\n"
-HEADER+="To: $EMAIL\n"
-HEADER+="Subject: $MAIL_SUBJECT\n"
+HEADER+="From: ${FROM}\n"
+HEADER+="To: ${EMAIL}\n"
+HEADER+="Subject: ${MAIL_SUBJECT}\n"
 
 # If the user has SMTP_RELAY set then pass that to sendemail
 SMTP_RELAY_CMD=
-if [ -n "$SMTP_RELAY" ]; then
-    SMTP_RELAY_CMD="--smtp-relay $SMTP_RELAY"
+if [ -n "${SMTP_RELAY}" ]; then
+    SMTP_RELAY_CMD="--smtp-relay ${SMTP_RELAY}"
 fi
 
+# Files containing output from the command will use this prefix
+OUTPUT_PREFIX="~/.${BASENAME}.${CMD_NAME}"
+
+NOHUP_CMD="\"nohup ${CMD}\" > ${OUTPUT_PREFIX}.out 2> ${OUTPUT_PREFIX}.err "
+NOHUP_CMD+="< /dev/null"
+
 # Run the job and drop a .kickoff file in the user's home dir
-# Send them an email if they haven't explicitly turned that off
+# Send them an email if requested
 # Do this all in the background
-if [ "$NOEMAIL_SET" = "true" ] || [ "$EMAIL_SET" == "false" ]; then
-    (TIME=$(time(nohup $JOB > /dev/null 2> /dev/null < /dev/null) 2>&1); \
-        MAIL_BODY="$JOB\n$TIME"; \
-        echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME) &
+if [ "${EMAIL_SET}" == true ]; then
+
+    (TIME=$(time (nohup "${CMD}" > /dev/null 2> /dev/null < /dev/null) 2>&1); \
+        MAIL_BODY="${CMD}\n${TIME}"; \
+        echo -e "${MAIL_BODY}" > ~/.kickoff_"${CMD_NAME}"; \
+        echo -e "${HEADER}${MAIL_BODY}" | \
+        sendemail --from "${FROM}" --to "${EMAIL} ${SMTP_RELAY_CMD}") &
+
 else
-    (TIME=$(time(nohup $JOB > /dev/null 2> /dev/null < /dev/null) 2>&1); \
-        MAIL_BODY="$JOB\n$TIME"; \
-        echo -e "$MAIL_BODY" > ~/.kickoff_$SHORTNAME; \
-        echo -e "$HEADER$MAIL_BODY" | \
-        sendemail --from $FROM --to $EMAIL $SMTP_RELAY_CMD) &
+
+    echo ${NOHUP_CMD}
+
+    ${NOHUP_CMD}
+
+    #TIME=$(time ${NOHUP_CMD})
+
+#            (TIME=$(time ("${NOHUP_CMD}"); \
+#        MAIL_BODY="${CMD}\n${TIME}"; \
+#        echo -e "${MAIL_BODY}" > "${OUTPUT_PREFIX}") &
+
 fi
