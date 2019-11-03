@@ -100,9 +100,8 @@ WRAPPED_CMD="${CMD} > ${OUTPUT_DIR}/out 2> ${OUTPUT_DIR}/err"
 # has to be used here instead of bracket grouping for some reason.
 WRAPPED_CMD="time (${WRAPPED_CMD}) 2> ${OUTPUT_DIR}/time"
 
-# This makes the whole thing uninterruptible.  Do this last.
-# Frustratingly, nohup can't be given a subshell, so invoke bash with it
-# instead.
+# This makes the whole thing uninterruptible.  Do this last.  Frustratingly,
+# nohup can't be given a subshell, so invoke bash with it instead.
 WRAPPED_CMD="nohup bash -c '${WRAPPED_CMD}' > /dev/null 2> /dev/null "
 WRAPPED_CMD+="< /dev/null &"
 
