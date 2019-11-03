@@ -5,7 +5,7 @@ display_usage() {
     echo "Usage: $0 [-c | --clear] [-e | --email] [-h | --help] CMD"
 }
 
-BASENAME=$(basename $0)
+BASENAME=$(basename "$0")
 
 # Reports go here (intentionally unquoted)
 REPORT_DIR=~/.${BASENAME}
@@ -47,7 +47,7 @@ done
 
 if [ "${CLEAR_SET}" == true ]; then
 
-    rm -rf "${REPORT_DIR}"/*
+    rm -rf "${REPORT_DIR:?}"/*
 
     if [ "${CMD_SET}" == false ]; then
         exit 0
