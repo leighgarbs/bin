@@ -7,6 +7,9 @@ display_usage() {
 
 BASENAME=$(basename $0)
 
+# Reports go here (intentionally unquoted)
+REPORT_DIR=~/.${BASENAME}
+
 CLEAR_SET=false
 
 CMD=
@@ -53,7 +56,7 @@ done
 
 if [ "${CLEAR_SET}" == true ]; then
 
-    rm -f ~/."${BASENAME}"*
+    rm "${REPORT_DIR}"/*
 
     if [ "${CMD_SET}" == false ]; then
         exit 0
@@ -71,9 +74,6 @@ FROM=$(whoami)@$(hostname)
 # supposed to be there.
 CMD_NAME=$(echo "${CMD}" | cut -d " " -f 1)$$
 
-# Reports go here
-REPORT_DIR=~/.${BASENAME}
-
 # Make the report directory if it doesn't already exist
 if ! test -d "${REPORT_DIR}"; then
 
@@ -84,10 +84,8 @@ if ! test -d "${REPORT_DIR}"; then
     mkdir "${REPORT_DIR}"
 fi
 
-if [ "${VERBOSITY}" -gt 0 ]; then
-    # Print the job name so the user can see it
-    echo "${CMD_NAME}"
-fi
+# Print the job name so the user can see it
+echo "${CMD_NAME}"
 
 # Construct the subject line
 MAIL_SUBJECT="${CMD_NAME} done on ${FROM}"
@@ -105,9 +103,9 @@ if [ -n "${SMTP_RELAY}" ]; then
 fi
 
 # Files containing output from the command will use this prefix
-OUTPUT_PREFIX="~/.${BASENAME}.${CMD_NAME}"
+OUTPUT_PREFIX="${REPORT_DIR}/${CMD_NAME}"
 
-NOHUP_CMD="\"nohup ${CMD}\" > ${OUTPUT_PREFIX}.out 2> ${OUTPUT_PREFIX}.err "
+NOHUP_CMD="nohup ${CMD} > ${OUTPUT_PREFIX}.out 2> ${OUTPUT_PREFIX}.err "
 NOHUP_CMD+="< /dev/null"
 
 # Run the job and drop a .kickoff file in the user's home dir
@@ -123,9 +121,7 @@ if [ "${EMAIL_SET}" == true ]; then
 
 else
 
-    echo ${NOHUP_CMD}
-
-    ${NOHUP_CMD}
+    eval "${NOHUP_CMD}"
 
     #TIME=$(time ${NOHUP_CMD})
 
