@@ -45,10 +45,16 @@ do
     shift
 done
 
+# Deal with the -c argument for clearing the report directory
 if [ "${CLEAR_SET}" == true ]; then
+
+    if [ "${VERBOSITY}" -gt 0 ]; then
+        echo "Removing contents of ${REPORT_DIR}"
+    fi
 
     rm -rf "${REPORT_DIR:?}"/*
 
+    # This lets a user just clear the directory if that's all they want to do
     if [ "${CMD_SET}" == false ]; then
         exit 0
     fi
@@ -73,7 +79,8 @@ fi
 # supposed to be there.
 
 # This grabs the first space-delimited token.  This may have unsafe characters
-# in it so we clean it below.
+# in it so we clean it by stripping of all the non-alphanumeric characters and
+# then grabbing only the first space-delimited token
 CMD_IDENT=$(echo "${CMD}" | cut -d " " -f 1 | tr -C '[:alpha:]' " ")
 
 # Now pick off the first space-delimited token.  This isn't the best way to do
