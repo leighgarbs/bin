@@ -1,16 +1,15 @@
 #!/bin/bash
 
-function displayhelp {
-    echo "$0 [ --debug | --release ] [ --staticlibs | --sharedlibs ] [ --help ]"
+function display_usage {
+    USAGE_TEXT="Usage: $0 [-d | --debug] [-h | --help] [-r | --release] "
+    USAGE_TEXT+="[--staticlibs] [--sharedlibs] PATH"
+    echo "${USAGE_TEXT}"
 }
 
 DEBUG_SET=false
 RELEASE_SET=false
 STATIC_SET=false
 SHARED_SET=false
-
-DIRECTORY_SET=false
-DIRECTORY=.
 
 while [ -n "$1" ]
 do
@@ -21,8 +20,8 @@ do
             ;;
 
         -h | --help)
-            displayhelp
-            exit
+            display_usage
+            exit 0
             ;;
 
         -r | --release)
@@ -55,21 +54,19 @@ done
 
 ARGS=
 
-if [ $DEBUG_SET == true ]; then
+if [ "${DEBUG_SET}" == true ]; then
     ARGS+='-DCMAKE_BUILD_TYPE=Debug'
-elif [ $RELEASE_SET == true ]; then
+elif [ "${RELEASE_SET}" == true ]; then
     ARGS+='-DCMAKE_BUILD_TYPE=Release'
 fi
 
 ARGS+=' '
 
-if [ $STATIC_SET == true ]; then
+if [ "${STATIC_SET}" == true ]; then
     ARGS+='-DBUILD_SHARED_LIBS=OFF'
-elif [ $SHARED_SET == true ]; then
+elif [ "${SHARED_SET}" == true ]; then
     ARGS+='-DBUILD_SHARED_LIBS=ON'
 fi
 
-ARGS+=" $@"
-
 # Generate the makefile with cmake
-cmake $ARGS
+cmake "${ARGS}" "$@"
