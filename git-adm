@@ -2,14 +2,12 @@
 # Prints added, deleted, and modified files over the specified commit range
 
 COMMIT_RANGE="HEAD~1.."
-COMMIT_RANGE_SET=false
 
 while [ -n "$1" ]
 do
     case "$1" in
         *)
             COMMIT_RANGE="$1"
-            COMMIT_RANGE_SET=true
             break;
             ;;
 
@@ -20,12 +18,12 @@ do
 done
 
 echo "Added:"
-git diff --diff-filter=A --name-only "$COMMIT_RANGE"
+git diff --diff-filter=A --name-only "${COMMIT_RANGE}"
 echo ""
 
 echo "Deleted:"
-git diff --diff-filter=D --name-only "$COMMIT_RANGE"
+git diff --diff-filter=D --name-only "${COMMIT_RANGE}"
 echo ""
 
 echo "Modified:"
-git diff --diff-filter=CMRTUXB --name-only "$COMMIT_RANGE"
+git diff --diff-filter=CMRTUXB --name-only "${COMMIT_RANGE}"
