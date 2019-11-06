@@ -90,9 +90,11 @@ for WORD in ${CMD_IDENT}; do
     break
 done
 
-# Files containing output from the command will use this prefix (the $$ appends
-# the PID)
-OUTPUT_DIR="${REPORT_DIR}/${CMD_IDENT}$$"
+# Files containing output from the command will use this directory prefix (the
+# $$ appends the PID). Command output is sorted first by command identifier,
+# then by Epoch time, then by PID
+OUTPUT_DIR="${REPORT_DIR}/${CMD_IDENT}/"
+OUTPUT_DIR+=$(date -j -f "%a %b %d %T %Z %Y" "`date`" "+%s")/$$
 
 if [ "${VERBOSITY}" -gt 0 ]; then
     echo "Reports will be written to ${OUTPUT_DIR}"
