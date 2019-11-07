@@ -81,7 +81,7 @@ fi
 # This grabs the first space-delimited token.  This may have unsafe characters
 # in it so we clean it by stripping of all the non-alphanumeric characters and
 # then grabbing only the first space-delimited token
-CMD_IDENT=$(echo "${CMD}" | cut -d " " -f 1 | tr -C '[:alpha:]' " ")
+CMD_IDENT=$(basename "${CMD}" | cut -d " " -f 1 | tr -C '[:alpha:]' " ")
 
 # Now pick off the first space-delimited token.  This isn't the best way to do
 # this since we won't want to loop here, but it's what seems to be working now.
