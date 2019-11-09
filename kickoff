@@ -2,7 +2,17 @@
 
 # Prints appropriate usage
 display_usage() {
-    echo "Usage: $0 [-c | --clear] [-e | --email] [-h | --help] CMD"
+    echo "Usage: $0 [-c | --clear] [-h | --help] [-v | --verbose] CMD"
+    HELP_TEXT="Runs CMD in 'time' and disassociated from the current shell. "
+    HELP_TEXT+="Standard output, error, and time output are saved into a "
+    HELP_TEXT+="subdirectory of ~/.$(basename ${0})."
+    echo ${HELP_TEXT} | fold -s
+
+    echo -n "  -c | --clear      Deletes the contents of the "
+    echo "~/.$(basename ${0}) directory prior to"
+    echo "                    running CMD"
+    echo "  -h | --help       Displays this help text"
+    echo "  -v | --verbose    Talk more"
 }
 
 BASENAME=$(basename "$0")
