@@ -1,0 +1,74 @@
+#!/bin/bash -e
+
+addpath()
+{
+    PATHVAR=
+    NEWPATH=
+
+    APPEND_SET=false
+    FORCE_SET=false
+
+    POSITIONAL_ARG_COUNT=0
+
+    while [ -n "$1" ]; do
+        case "$1" in
+
+            -a | --append)
+                APPEND_SET=true
+                ;;
+
+            -f | --force)
+                FORCE_SET=true
+                ;;
+
+            *)
+                # Handle positional arguments, have to count
+                POSITIONAL_ARG_COUNT=$((POSITIONAL_ARG_COUNT + 1))
+
+                case "${POSITIONAL_ARG_COUNT}" in
+
+                    1)
+                        PATHVAR="${1}"
+                        ;;
+
+                    2)
+                        NEWPATH="${1}"
+                        ;;
+
+                    *)
+                        return 1
+                        ;;
+                esac
+        esac
+
+        # We're done with the current argument, move to the next.
+        shift
+    done
+
+    # Make sure we got enough positional arguments
+    if [ "${POSITIONAL_ARG_COUNT}" == 1 ]; then
+        return 1
+    fi
+
+    # Do nothing if NEWPATH is on the path already, unless we're being forced to
+    if echo "${!PATHVAR}" | tr ":" "\n" | grep -x "${NEWPATH}" > /dev/null && \
+            [ "${FORCE_SET}" != true ]; then
+        echo "\"${NEWPATH}\" is already in ${PATHVAR}, not adding"
+        return 0
+    fi
+
+    # The internet says all kinds of scary things about using eval in Bash scripts, but declare doesn't work,
+    # and not using either eval or declare isn't syntactically valid, so this is the only option.
+
+    if [ -z "${!PATHVAR}" ]; then
+        eval "${PATHVAR}=${NEWPATH}"
+    else
+
+        if [ "${APPEND_SET}" == true ]; then
+            eval "${PATHVAR}=${!PATHVAR}:${NEWPATH}"
+        else
+            eval "${PATHVAR}=${NEWPATH}:${!PATHVAR}"
+        fi
+
+    fi
+}
