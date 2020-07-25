@@ -1,5 +1,3 @@
-#!/bin/bash -e
-
 addpath()
 {
     PATHVAR=
@@ -46,28 +44,37 @@ addpath()
     done
 
     # Make sure we got enough positional arguments
-    if [ "${POSITIONAL_ARG_COUNT}" == 1 ]; then
+    if [ "${POSITIONAL_ARG_COUNT}" = 1 ]; then
         return 1
     fi
 
+    # Indirect expansion is done differently between bash and zsh.  Handle the zsh case
+    # explicitly, and then hope everything else is compatible with Bash syntax.
+    if [ "$(basename ${SHELL})" = zsh ]; then
+        PATHVAR_VALUE="${(P)PATHVAR}"
+    else
+        PATHVAR_VALUE="${!PATHVAR}"
+    fi
+
     # Do nothing if NEWPATH is on the path already, unless we're being forced to
-    if echo "${!PATHVAR}" | tr ":" "\n" | grep -x "${NEWPATH}" > /dev/null && \
+    if echo "${PATHVAR_VALUE}" | tr ":" "\n" | grep -x "${NEWPATH}" > /dev/null && \
             [ "${FORCE_SET}" != true ]; then
         echo "\"${NEWPATH}\" is already in ${PATHVAR}, not adding"
         return 0
     fi
 
-    # The internet says all kinds of scary things about using eval in Bash scripts, but declare doesn't work,
-    # and not using either eval or declare isn't syntactically valid, so this is the only option.
+    # The internet says all kinds of scary things about using eval in Bash scripts, but declare
+    # doesn't work, and not using either eval or declare isn't syntactically valid, so this is
+    # the only option.
 
-    if [ -z "${!PATHVAR}" ]; then
+    if [ -z "${PATHVAR_VALUE}" ]; then
         eval "${PATHVAR}=${NEWPATH}"
     else
 
-        if [ "${APPEND_SET}" == true ]; then
-            eval "${PATHVAR}=${!PATHVAR}:${NEWPATH}"
+        if [ "${APPEND_SET}" = true ]; then
+            eval "${PATHVAR}=${PATHVAR_VALUE}:${NEWPATH}"
         else
-            eval "${PATHVAR}=${NEWPATH}:${!PATHVAR}"
+            eval "${PATHVAR}=${NEWPATH}:${PATHVAR_VALUE}"
         fi
 
     fi
