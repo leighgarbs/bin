@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+function prepend_to_path()
+{
+    # Takes only the path to prepend to PATH, nothing else
+    if [ "${#}" -gt 1 ]; then
+        exit 1
+    fi
+
+    NEWPATH="${1}"
+
+    # Do nothing if NEWPATH is on the path already
+    if echo "${PATH}" | grep "${NEWPATH}" > /dev/null; then
+        return 0
+    fi
+
+    if [ -z "${PATH}" ]; then
+        PATH="${NEWPATH}"
+    else
+        PATH="${NEWPATH}:${PATH}"
+    fi
+
+    export PATH
+}
