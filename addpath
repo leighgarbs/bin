@@ -5,6 +5,7 @@ addpath()
 
     APPEND_SET=false
     FORCE_SET=false
+    VERBOSE_SET=false
 
     POSITIONAL_ARG_COUNT=0
 
@@ -17,6 +18,10 @@ addpath()
 
             -f | --force)
                 FORCE_SET=true
+                ;;
+
+            -v | --verbose)
+                VERBOSE_SET=true
                 ;;
 
             *)
@@ -59,7 +64,11 @@ addpath()
     # Do nothing if NEWPATH is on the path already, unless we're being forced to
     if echo "${PATHVAR_VALUE}" | tr ":" "\n" | grep -x "${NEWPATH}" > /dev/null && \
             [ "${FORCE_SET}" != true ]; then
-        echo "\"${NEWPATH}\" is already in ${PATHVAR}, not adding"
+
+        if [ "${VERBOSE_SET}" == true ]; then
+            echo "\"${NEWPATH}\" is already in ${PATHVAR}, not adding"
+        fi
+
         return 0
     fi
 
