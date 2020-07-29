@@ -65,7 +65,7 @@ addpath()
     if echo "${PATHVAR_VALUE}" | tr ":" "\n" | grep -x "${NEWPATH}" > /dev/null && \
             [ "${FORCE_SET}" != true ]; then
 
-        if [ "${VERBOSE_SET}" == true ]; then
+        if [ "${VERBOSE_SET}" = true ]; then
             echo "\"${NEWPATH}\" is already in ${PATHVAR}, not adding"
         fi
 
