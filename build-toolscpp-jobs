@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+API_TOKEN="${1}"
+
+function post_build
+{
+    curl -X POST -L --user "leigh:${API_TOKEN}" \
+         "http://fs.dmz:8081/job/tools-cpp/job/${1}/build" > /dev/null 2> /dev/null
+}
+
+post_build failstage-clang
+post_build failstage-cppcheck
+post_build failstage-debugbuild
+post_build failstage-debugtests
+post_build failstage-releasebuild
+post_build failstage-releasetests
+post_build failstage-valgrind
+post_build master
