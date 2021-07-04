@@ -1,13 +1,14 @@
-#!/bin/bash
+#!/bin/sh -e
 
 INPUTFILE=
 INPUTFILE_SET=false
 
-while [ -n "$1" ]
-do
-    case "$1" in
+while [ -n "${1}" ]; do
+
+    case "${1}" in
+
         *)
-            INPUTFILE="$1"
+            INPUTFILE="${1}"
             INPUTFILE_SET=true
             ;;
     esac
@@ -17,7 +18,7 @@ do
 done
 
 # Remove whitespace at the end of lines
-if [ "${INPUTFILE_SET}" == true ]; then
+if [ "${INPUTFILE_SET}" = true ]; then
     sed --in-place 's/[[:space:]]\+$//' "${INPUTFILE}"
 else
     cat - | sed 's/[[:space:]]\+$//'

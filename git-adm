@@ -1,21 +1,11 @@
-#!/bin/bash
+#!/bin/sh -e
+
 # Prints added, deleted, and modified files over the specified commit range
 
 COMMIT_RANGE="HEAD~1.."
-
-while [ -n "$1" ]
-do
-    case "$1" in
-        *)
-            COMMIT_RANGE="$1"
-            break;
-            ;;
-
-    esac
-
-    # We're done with the current argument, move to the next.
-    shift
-done
+if [ "${1}" ]; then
+    COMMIT_RANGE="${1}"
+fi
 
 echo "Added:"
 git diff --diff-filter=A --name-only "${COMMIT_RANGE}"

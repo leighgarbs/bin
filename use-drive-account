@@ -1,5 +1,0 @@
-#!/bin/bash
-
-rm ~/.gdrive
-
-ln -s ~/.gdrive_$1 ~/.gdrive

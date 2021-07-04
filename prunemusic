@@ -11,7 +11,7 @@ find . -name ._.DS_Store -exec rm {} +
 find . -name desktop.ini -exec rm {} +
 
 # Adjust permissions
-chown -R $USER:$USER .
+chown -R "${USER}:${USER}" .
 find . -iname "*.gif" -exec chmod 644 {} +
 find . -iname "*.jpg" -exec chmod 644 {} +
 find . -iname "*.mp3" -exec chmod 644 {} +

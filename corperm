@@ -1,22 +1,22 @@
-#!/bin/bash
+#!/bin/sh -e
 
 TXTPERM="644"
 FINDROOT="."
 
-if [ -n "$1" ]; then
-    FINDROOT="$1"
+if [ -n "${1}" ]; then
+    FINDROOT="${1}"
 fi
 
-find "$FINDROOT" -name "*.c"     -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.cpp"   -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.h"     -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.hpp"   -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.xml"   -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.txt"   -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.htm"   -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.html"  -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.idl"   -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.conf"  -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.cmake" -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.pdf"   -type f -exec chmod "$TXTPERM" {} \;
-find "$FINDROOT" -name "*.cxx"   -type f -exec chmod "$TXTPERM" {} \;
+find "${FINDROOT}" -name "*.c"     -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.cpp"   -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.h"     -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.hpp"   -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.xml"   -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.txt"   -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.htm"   -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.html"  -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.idl"   -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.conf"  -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.cmake" -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.pdf"   -type f -exec chmod "${TXTPERM}" {} \;
+find "${FINDROOT}" -name "*.cxx"   -type f -exec chmod "${TXTPERM}" {} \;

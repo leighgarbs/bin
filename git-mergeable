@@ -1,11 +1,12 @@
 #!/bin/bash -e
 
 # Prints appropriate usage
-display_usage() {
+display_usage()
+{
     echo "Usage: $0 [-h | --help] [-v | --verbose] BRANCH_TO BRANCH_FROM"
     HELP_TEXT="Runs git merge-base --is-ancestor to determine if BRANCH_TO can "
     HELP_TEXT+="be fast-forwarded onto BRANCH_FROM."
-    echo ${HELP_TEXT} | fold -s
+    echo "${HELP_TEXT}" | fold -s
 
     echo "  BRANCH_TO         Merging to this branch"
     echo "  BRANCH_FROM       Merging from this branch"
@@ -17,6 +18,7 @@ BRANCH_FROM=
 POSITIONAL_ARG_COUNT=0
 
 while [ -n "${1}" ]; do
+
     case "${1}" in
 
         -h | --help)
@@ -53,5 +55,3 @@ if ! git merge-base --is-ancestor "${BRANCH_TO}" "${BRANCH_FROM}"; then
     echo "Not an ancestor"
     exit 1
 fi
-
-exit 0

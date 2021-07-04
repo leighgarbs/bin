@@ -1,10 +1,9 @@
-#!/bin/bash
+#!/bin/sh -e
 
-if [ $# -eq 0 ]; then
+if [ "${#}" -eq 0 ]; then
     echo Get mail server for what domain?
     exit 1
 fi
 
 # Get the best mail server
-host -t MX $1 | cut -d " " -f 6- | sort -n | sed -n 1P | sed s/.$// | \
-    cut -d " " -f 2
+host -t MX "${1}" | cut -d " " -f 6- | sort -n | sed -n 1P | sed s/.$// | cut -d " " -f 2

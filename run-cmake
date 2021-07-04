@@ -1,9 +1,8 @@
 #!/bin/bash
 
-function display_usage {
-    USAGE_TEXT="Usage: $0 [-d | --debug] [-h | --help] [-r | --release] "
-    USAGE_TEXT+="[--staticlibs] [--sharedlibs] PATH"
-    echo "${USAGE_TEXT}"
+display_usage()
+{
+    echo "Usage: ${0} [-d | --debug] [-h | --help] [-r | --release] [--staticlibs] [--sharedlibs] PATH"
 }
 
 DEBUG_SET=false
@@ -11,9 +10,10 @@ RELEASE_SET=false
 STATIC_SET=false
 SHARED_SET=false
 
-while [ -n "$1" ]
-do
-    case "$1" in
+while [ -n "${1}" ]; do
+
+    case "${1}" in
+
         -d | --debug)
             DEBUG_SET=true
             RELEASE_SET=false
@@ -54,19 +54,19 @@ done
 
 ARGS=
 
-if [ "${DEBUG_SET}" == true ]; then
+if [ "${DEBUG_SET}" = true ]; then
     ARGS+='-DCMAKE_BUILD_TYPE=Debug'
-elif [ "${RELEASE_SET}" == true ]; then
+elif [ "${RELEASE_SET}" = true ]; then
     ARGS+='-DCMAKE_BUILD_TYPE=Release'
 fi
 
 ARGS+=' '
 
-if [ "${STATIC_SET}" == true ]; then
+if [ "${STATIC_SET}" = true ]; then
     ARGS+='-DBUILD_SHARED_LIBS=OFF'
-elif [ "${SHARED_SET}" == true ]; then
+elif [ "${SHARED_SET}" = true ]; then
     ARGS+='-DBUILD_SHARED_LIBS=ON'
 fi
 
 # Generate the makefile with cmake
-cmake "${ARGS}" "$@"
+cmake "${ARGS}" "${@}"

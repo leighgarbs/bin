@@ -1,12 +1,13 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Prints appropriate usage
-display_usage() {
-    echo "Usage: $0 [-c | --clear] [-h | --help] [-v | --verbose] CMD"
+display_usage()
+{
+    echo "Usage: ${0} [-c | --clear] [-h | --help] [-v | --verbose] CMD"
     HELP_TEXT="Runs CMD in 'time' and disassociated from the current shell. "
     HELP_TEXT+="Standard output, error, and time output are saved into a "
     HELP_TEXT+="subdirectory of ~/.$(basename ${0})."
-    echo ${HELP_TEXT} | fold -s
+    echo "${HELP_TEXT}" | fold -s
 
     echo -n "  -c | --clear      Deletes the contents of the "
     echo "~/.$(basename ${0}) directory prior to"
@@ -15,10 +16,10 @@ display_usage() {
     echo "  -v | --verbose    Talk more"
 }
 
-BASENAME=$(basename "$0")
+BASENAME=$(basename "${0}")
 
-# Reports go here (intentionally unquoted)
-REPORT_DIR=~/.${BASENAME}
+# Reports go here
+REPORT_DIR="${HOME}/.${BASENAME}"
 
 CLEAR_SET=false
 
@@ -27,9 +28,9 @@ CMD_SET=false
 
 VERBOSITY=0
 
-while [ -n "$1" ]
-do
-    case "$1" in
+while [ -n "${1}" ]; do
+
+    case "${1}" in
 
         -c | --clear)
             CLEAR_SET=true
@@ -45,7 +46,7 @@ do
             ;;
 
         *)
-            CMD="$*"
+            CMD="${*}"
             CMD_SET=true
             break
             ;;
@@ -56,7 +57,7 @@ do
 done
 
 # Deal with the -c argument for clearing the report directory
-if [ "${CLEAR_SET}" == true ]; then
+if [ "${CLEAR_SET}" = true ]; then
 
     if [ "${VERBOSITY}" -gt 0 ]; then
         echo "Removing contents of ${REPORT_DIR}"
@@ -65,12 +66,12 @@ if [ "${CLEAR_SET}" == true ]; then
     rm -rf "${REPORT_DIR:?}"/*
 
     # This lets a user just clear the directory if that's all they want to do
-    if [ "${CMD_SET}" == false ]; then
+    if [ "${CMD_SET}" = false ]; then
         exit 0
     fi
 fi
 
-if [ "${CMD_SET}" == false ]; then
+if [ "${CMD_SET}" = false ]; then
     display_usage
     exit 1
 fi
@@ -104,7 +105,7 @@ done
 # $$ appends the PID). Command output is sorted first by command identifier,
 # then by Epoch time, then by PID
 OUTPUT_DIR="${REPORT_DIR}/${CMD_IDENT}/"
-OUTPUT_DIR+=$(date +%s)/$$
+OUTPUT_DIR="${OUTPUT_DIR} "$(date +%s)/$$
 
 if [ "${VERBOSITY}" -gt 0 ]; then
     echo "Reports will be written to ${OUTPUT_DIR}"

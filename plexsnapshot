@@ -7,10 +7,10 @@ DST="/mnt/raid/Plex Media Server.tar.gz"
 systemctl stop plexmediaserver.service
 
 # Take the snapshot
-tar -zcpf "$DST" "$SRC"
+tar -zcpf "${DST}" "${SRC}"
 
 # Start plex again, hopefully minimizing downtime
 systemctl start plexmediaserver.service
 
 # Adjust permissions so the snapshot is world-readable
-chmod a+r "$DST"
+chmod a+r "${DST}"

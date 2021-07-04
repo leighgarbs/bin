@@ -1,8 +1,4 @@
-#!/bin/bash
-
-function display_usage {
-    echo "Usage: $0 [-s | --sync] {-t | --type TYPE} {-c CONFIGFILE}"
-}
+#!/bin/sh -e
 
 SYNC=false
 
@@ -12,11 +8,17 @@ TYPE_SET=false
 CONFIG_FILE=
 CONFIG_FILE_SET=false
 
-while [ -n "$1" ]
-do
+display_usage()
+{
+    echo "Usage: $0 [-s | --sync] {-t | --type TYPE} {-c CONFIGFILE}"
+}
+
+while [ -n "$1" ]; do
+
     case "$1" in
+
         -c)
-            CONFIG_FILE="$2"
+            CONFIG_FILE="${2}"
             CONFIG_FILE_SET=true
             shift
             ;;
@@ -31,7 +33,7 @@ do
             ;;
 
         -t | --type)
-            TYPE="$2"
+            TYPE="${2}"
             TYPE_SET=true
             shift
             ;;
@@ -46,7 +48,7 @@ do
     shift
 done
 
-if [ "${TYPE_SET}" == false ] || [ "${CONFIG_FILE_SET}" == false ]; then
+if [ "${TYPE_SET}" = false ] || [ "${CONFIG_FILE_SET}" = false ]; then
     display_usage
     exit 1
 fi
@@ -54,9 +56,9 @@ fi
 SYNC_RESULT=0
 
 # sync if the user wants to
-if [ "${SYNC}" == true ]; then
+if [ "${SYNC}" = true ]; then
     rsnapshot -c "${CONFIG_FILE}" sync
-    SYNC_RESULT=$?
+    SYNC_RESULT="${?}"
 fi
 
 # exit if the sync didn't work
@@ -65,5 +67,3 @@ if [ "${SYNC_RESULT}" != 0 ]; then
 fi
 
 rsnapshot -c "${CONFIG_FILE}" "${TYPE}"
-
-exit $?
