@@ -1,0 +1,21 @@
+#!/bin/sh -e
+
+ROOT_DIR="${1}"
+if [ -z "${ROOT_DIR}" ]; then
+    ROOT_DIR=.
+fi
+
+delete_files()
+{
+    for GLOB_PATTERN in "${@}"; do
+        find "${ROOT_DIR}" -name "${GLOB_PATTERN}" -exec rm {} +
+    done
+}
+
+# Delete files that shouldn't exist
+delete_files "._*" __MACOSX .DS_Store ._.DS_Store desktop.ini
+
+chown -R "${USER}:${USER}" "${ROOT_DIR}"
+# Assume this is appropriate for media files of all type; group write is set so Plex can modify
+find "${ROOT_DIR}" -type f -exec chmod 664 {} +
+find "${ROOT_DIR}" -type d -exec chmod 775 {} +
