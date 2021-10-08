@@ -1,4 +1,6 @@
 #!/bin/sh -e
 
+killall ssh-agent
+
 eval "$(ssh-agent)"
 ssh-add
